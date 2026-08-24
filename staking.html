@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFWAN COIN - Staking DApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #121212; color: #fff; text-align: center; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        button { background: #f0b90b; color: #000; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin: 8px 0; }
+        input { width: 90%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; }
+        .box { background: #2a2a2a; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>AFWAN COIN Staking</h2>
+    <button id="btnConnect" onclick="connectWallet()">Hubungkan Wallet</button>
+    <p id="walletAddress" style="font-size: 12px; color: #aaa;"></p>
+
+    <div class="box">
+        <h4>Stake AC Token</h4>
+        <input type="number" id="stakeAmount" placeholder="Jumlah AC (contoh: 1000)">
+        <button onclick="approveAC()">1. Approve AC</button>
+        <button onclick="stakeAC()">2. Stake AC</button>
+    </div>
+
+    <div class="box">
+        <h4>Informasi & Klaim</h4>
+        <p>Est. Reward Anda: <span id="rewardAmount">0</span> AC</p>
+        <button onclick="claimReward()">Klaim Reward</button>
+        <button onclick="withdrawAC()" style="background:#e53e3e; color:#fff;">Withdraw Stake</button>
+    </div>
+</div>
+
+<script>
+const STAKING_ADDRESS = "0xA14e72742d6e4dF4c429DbCDedf409c3674B3D0C";
+const TOKEN_ADDRESS = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
+
+const TOKEN_ABI = [
+    "function approve(address spender, uint256 amount) public returns (bool)"
+];
+const STAKING_ABI = [
+    "function stake(uint256 _amount, bool _isLP) external",
+    "function withdraw(uint256 _amount, bool _isLP) external",
+    "function claimReward(bool _isLP) external",
+    "function calculateReward(address _user, bool _isLP) public view returns (uint256)"
+];
+
+let provider, signer, stakingContract, tokenContract, userAddress;
+
+async function connectWallet() {
+    if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+        document.getElementById("walletAddress").innerText = "Connected: " + userAddress;
+        document.getElementById("btnConnect").innerText = "Wallet Terhubung";
+        
+        stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+        tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+        updateReward();
+    } else {
+        alert("Silakan install MetaMask!");
+    }
+}
+
+async function approveAC() {
+    const amount = document.getElementById("stakeAmount").value;
+    if(!amount) return alert("Masukkan jumlah AC");
+    const parsedAmount = ethers.utils.parseUnits(amount, 18);
+    const tx = await tokenContract.approve(STAKING_ADDRESS, parsedAmount);
+    await tx.wait();
+    alert("Approve Berhasil!");
+}
+
+async function stakeAC() {
+    const amount = document.getElementById("stakeAmount").value;
+    if(!amount) return alert("Masukkan jumlah AC");
+    const parsedAmount = ethers.utils.parseUnits(amount, 18);
+    const tx = await stakingContract.stake(parsedAmount, false);
+    await tx.wait();
+    alert("Staking Berhasil!");
+    updateReward();
+}
+
+async function claimReward() {
+    const tx = await stakingContract.claimReward(false);
+    await tx.wait();
+    alert("Klaim Reward Berhasil!");
+    updateReward();
+}
+
+async function withdrawAC() {
+    const amount = document.getElementById("stakeAmount").value;
+    if(!amount) return alert("Masukkan jumlah AC yang ingin ditarik");
+    const parsedAmount = ethers.utils.parseUnits(amount, 18);
+    const tx = await stakingContract.withdraw(parsedAmount, false);
+    await tx.wait();
+    alert("Penarikan Berhasil!");
+    updateReward();
+}
+
+async function updateReward() {
+    if(stakingContract && userAddress) {
+        const reward = await stakingContract.calculateReward(userAddress, false);
+        document.getElementById("rewardAmount").innerText = ethers.utils.formatUnits(reward, 18);
+    }
+}
+</script>
+</body>
+</html>
