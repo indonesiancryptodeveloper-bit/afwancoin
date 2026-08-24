@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AFWAN COIN (AC)</title>
+  <title>AFWAN COIN (AC) - BEP20 Official</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     body {
       background-color: #0b0e14;
@@ -17,23 +17,29 @@
       line-height: 1.6;
     }
     .container {
-      max-width: 1000px;
+      max-width: 1050px;
       margin: 0 auto;
       padding: 0 20px;
     }
 
-    /* Header */
+    /* Header & Navigation */
     header {
       background-color: #0f141c;
       border-bottom: 1px solid #1e293b;
       padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .logo {
+    .logo-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-weight: bold;
       color: #f59e0b;
       font-size: 1.1rem;
@@ -48,24 +54,28 @@
       color: #94a3b8;
       text-decoration: none;
       font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #f59e0b;
     }
     .btn-buy {
       background-color: #f59e0b;
       color: #000;
-      padding: 6px 14px;
-      border-radius: 4px;
+      padding: 8px 16px;
+      border-radius: 6px;
       font-weight: bold;
       text-decoration: none;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
 
     /* Hero Section */
     .hero {
-      padding: 50px 0;
+      padding: 50px 0 30px 0;
     }
     .hero-grid {
       display: grid;
-      grid-template-columns: 1.3fr 1fr;
+      grid-template-columns: 1.2fr 1fr;
       gap: 30px;
       align-items: center;
     }
@@ -74,57 +84,59 @@
       background: rgba(245, 158, 11, 0.15);
       color: #f59e0b;
       border: 1px solid rgba(245, 158, 11, 0.4);
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.75rem;
       margin-bottom: 15px;
     }
     .hero h1 {
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       color: #fff;
       margin-bottom: 15px;
+      line-height: 1.2;
     }
     .hero p {
       color: #94a3b8;
-      font-size: 0.9rem;
-      margin-bottom: 20px;
+      font-size: 0.95rem;
+      margin-bottom: 25px;
     }
     .hero-btn-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
     }
     .btn-main {
       background-color: #f59e0b;
       color: #000;
-      padding: 8px 16px;
-      border-radius: 4px;
+      padding: 10px 20px;
+      border-radius: 6px;
       font-weight: bold;
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
     .btn-sec {
       border: 1px solid #334155;
       color: #fff;
-      padding: 8px 16px;
-      border-radius: 4px;
+      padding: 10px 20px;
+      border-radius: 6px;
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
-    /* FIX FOTO UTAMA: Kepala Utuh Menggunakan contain */
+    /* Hero Card (Foto Utama Perbaikan Kepala Utuh) */
     .hero-card {
       background-color: #151a23;
       border: 1px solid #242c3d;
-      border-radius: 8px;
-      padding: 12px;
+      border-radius: 12px;
+      padding: 16px;
       text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .hero-img-box {
       width: 100%;
       height: 380px;
-      border-radius: 6px;
+      border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       background-color: #0d0f12;
       display: flex;
       align-items: center;
@@ -133,14 +145,30 @@
     .hero-img-box img {
       width: 100%;
       height: 100%;
-      object-fit: contain !important; /* MEMASTIKAN FOTO TAMPIL UTUH DAN TIDAK TERPOTONG */
+      object-fit: contain !important; /* MEMASTIKAN FOTO TAMPIL UTUH DARI KEPALA */
       display: block;
     }
     .hero-card-title {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #cbd5e1;
       font-weight: 600;
     }
+
+    /* Logo Animated Container */
+    .logo-ac-section {
+      text-align: center;
+      margin: 40px 0 20px 0;
+    }
+    .outer-cyber-ring {
+      transform-origin: center;
+      animation: rotateClockwise 15s linear infinite;
+    }
+    .inner-tech-ring {
+      transform-origin: center;
+      animation: rotateCounter 10s linear infinite;
+    }
+    @keyframes rotateClockwise { 100% { transform: rotate(360deg); } }
+    @keyframes rotateCounter { 100% { transform: rotate(-360deg); } }
 
     /* Banner Central */
     .banner-text {
@@ -148,7 +176,7 @@
       background-color: rgba(245, 158, 11, 0.05);
       color: #f59e0b;
       text-align: center;
-      padding: 10px;
+      padding: 12px;
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: bold;
@@ -156,9 +184,9 @@
     }
     .banner-image {
       width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 40px;
+      margin-bottom: 45px;
       border: 1px solid #242c3d;
     }
     .banner-image img {
@@ -171,8 +199,8 @@
     .section-title {
       text-align: center;
       color: #f59e0b;
-      font-size: 1.3rem;
-      margin-bottom: 25px;
+      font-size: 1.4rem;
+      margin-bottom: 30px;
     }
     .features-grid {
       display: grid;
@@ -183,13 +211,13 @@
     .feature-card {
       background-color: #151a23;
       border: 1px solid #242c3d;
-      padding: 20px 10px;
-      border-radius: 6px;
+      padding: 24px 12px;
+      border-radius: 8px;
       text-align: center;
     }
     .feature-icon {
-      font-size: 1.4rem;
-      margin-bottom: 8px;
+      font-size: 1.6rem;
+      margin-bottom: 10px;
     }
     .feature-card h4 {
       font-size: 0.85rem;
@@ -199,16 +227,16 @@
     /* Spesifikasi Tokenomika */
     .tokenomics-table {
       width: 100%;
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto 50px auto;
       border-collapse: collapse;
       background-color: #151a23;
       border: 1px solid #242c3d;
-      border-radius: 6px;
+      border-radius: 8px;
       overflow: hidden;
     }
     .tokenomics-table td {
-      padding: 10px 16px;
+      padding: 12px 20px;
       border-bottom: 1px solid #242c3d;
       font-size: 0.85rem;
     }
@@ -223,24 +251,24 @@
       font-weight: bold;
     }
 
-    /* Dokumentasi Section */
+    /* Dokumentasi Komunitas */
     .doc-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-bottom: 50px;
+      gap: 20px;
+      margin-bottom: 60px;
     }
     .doc-card {
       background-color: #151a23;
       border: 1px solid #242c3d;
-      border-radius: 6px;
+      border-radius: 8px;
       overflow: hidden;
-      padding-bottom: 12px;
+      padding-bottom: 14px;
       text-align: center;
     }
     .doc-img-box {
       width: 100%;
-      height: 180px;
+      height: 200px;
       overflow: hidden;
     }
     .doc-img-box img {
@@ -250,8 +278,8 @@
       object-position: top center;
     }
     .doc-card p {
-      margin-top: 10px;
-      font-size: 0.8rem;
+      margin-top: 12px;
+      font-size: 0.85rem;
       color: #cbd5e1;
       font-weight: 600;
     }
@@ -265,52 +293,105 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header / Navbar -->
   <header>
     <div class="container">
       <nav>
-        <div class="logo">AFWAN COIN</div>
+        <div class="logo-brand">
+          <span>AFWAN COIN (AC)</span>
+        </div>
         <ul class="nav-links">
-          <li><a href="#">Tentang</a></li>
+          <li><a href="#tentang">Tentang</a></li>
           <li><a href="#keunggulan">Keunggulan</a></li>
           <li><a href="#tokenomika">Tokenomika</a></li>
           <li><a href="#dokumentasi">Dokumentasi</a></li>
         </ul>
-        <a href="#" class="btn-buy">Beli Token</a>
+        <a href="https://t.me/AfwanCoin" target="_blank" class="btn-buy">Beli Token</a>
       </nav>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero" id="tentang">
     <div class="container">
       <div class="hero-grid">
         <div>
           <span class="badge">BEP-20 BNB Smart Chain</span>
           <h1>AFWAN COIN (AC)</h1>
-          <p>Aset Digital Masa Depan Komunitas Malang Raya. Dirancang untuk memperkuat ekosistem digital lokal, mendorong inklusi keuangan, dan menghubungkan para pemangku kepentingan dalam satu jaringan yang solid dan berkelanjutan.</p>
+          <p>Aset Digital Masa Depan Komunitas Malang Jawa Timur. Total supply 10M AC, smart contract verified di BscScan untuk menggerakkan ekosistem ekonomi digital & komunitas lokal.</p>
           <div class="hero-btn-group">
-            <a href="#" class="btn-main">Join Presale</a>
-            <a href="#" class="btn-sec">Get Contract</a>
+            <a href="https://t.me/AfwanCoin" target="_blank" class="btn-main">Telegram Official</a>
+            <a href="#tokenomika" class="btn-sec">BscScan Verified</a>
           </div>
         </div>
 
-        <!-- Foto Profil Hero (Afwan-Maksum.jpg) -->
+        <!-- Foto Utama Profil (Afwan-Maksum.jpg) -->
         <div class="hero-card">
           <div class="hero-img-box">
-            <img src="Afwan-Maksum.jpg" alt="Inisiatif & Kepemimpinan">
+            <img src="Afwan-Maksum.jpg" alt="Inisiatif & Kepemimpinan - Afwan Maksum">
           </div>
           <div class="hero-card-title">Inisiatif & Kepemimpinan</div>
         </div>
       </div>
 
+      <!-- Animated Logo AC BEP20 Section -->
+      <div class="logo-ac-section">
+        <svg viewBox="0 0 500 500" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldFuturistic" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffe066" />
+              <stop offset="40%" stop-color="#f59e0b" />
+              <stop offset="70%" stop-color="#b45309" />
+              <stop offset="100%" stop-color="#78350f" />
+            </linearGradient>
+            <linearGradient id="cyberBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#0369a1" />
+            </linearGradient>
+            <clipPath id="avatarClip">
+              <circle cx="250" cy="225" r="125" />
+            </clipPath>
+          </defs>
+
+          <!-- Outer Tech Cyber Ring (Berputar) -->
+          <circle class="outer-cyber-ring" cx="250" cy="250" r="230" fill="none" stroke="url(#goldFuturistic)" stroke-width="5" stroke-dasharray="120 30 60 30 20 10"/>
+          <circle class="inner-tech-ring" cx="250" cy="250" r="218" fill="none" stroke="url(#cyberBlue)" stroke-width="3" stroke-dasharray="40 40 80 20"/>
+
+          <!-- Base Coin Body -->
+          <circle cx="250" cy="250" r="205" fill="#0f172a" stroke="url(#goldFuturistic)" stroke-width="8" />
+
+          <!-- Curved Text Top & Bottom -->
+          <path id="textPathTop" d="M 60 250 A 190 190 0 0 1 440 250" fill="none" />
+          <path id="textPathBottom" d="M 440 250 A 190 190 0 0 1 60 250" fill="none" />
+
+          <text fill="#fbbf24" font-size="22" font-weight="900" letter-spacing="4">
+            <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">AFWAN COIN • BEP20</textPath>
+          </text>
+          <text fill="#38bdf8" font-size="15" font-weight="700" letter-spacing="2">
+            <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">Telegram: @AfwanCoin</textPath>
+          </text>
+
+          <!-- Avatar Frame -->
+          <circle cx="250" cy="225" r="127" fill="none" stroke="url(#goldFuturistic)" stroke-width="4" />
+          <g clip-path="url(#avatarClip)">
+            <image href="Afwan-Maksum.jpg" x="115" y="70" width="270" height="290" preserveAspectRatio="xMidYMin slice" />
+          </g>
+
+          <!-- AC TOKEN Badge -->
+          <g transform="translate(250, 395)">
+            <rect x="-80" y="-22" width="160" height="44" rx="22" fill="#090d16" stroke="url(#goldFuturistic)" stroke-width="3" />
+            <text x="0" y="7" fill="#fbbf24" font-size="18" font-weight="900" text-anchor="middle">AC TOKEN</text>
+          </g>
+        </svg>
+      </div>
+
       <div class="banner-text">
-        ✔ Verified & Audited Smart Contract
+        ✔ Verified & Audited Smart Contract di BscScan
       </div>
 
       <!-- Banner Tengah (afwan_maksum_pdip.jpg) -->
       <div class="banner-image">
-        <img src="Afwan (1).jpeg" alt="Tentang AFWAN COIN">
+        <img src="afwan_maksum_pdip.jpg" alt="Tentang AFWAN COIN">
       </div>
     </div>
   </section>
@@ -366,6 +447,10 @@
           <td>18</td>
         </tr>
         <tr>
+          <td>Komunitas Telegram</td>
+          <td><a href="https://t.me/AfwanCoin" target="_blank" style="color: #38bdf8; text-decoration: none;">@AfwanCoin</a></td>
+        </tr>
+        <tr>
           <td>Status Contract</td>
           <td><span style="color: #22c55e;">Verified Smart Contract</span></td>
         </tr>
@@ -373,7 +458,7 @@
     </div>
   </section>
 
-  <!-- Dokumentasi Section (Afwan (2).jpeg, Afwan (3).jpeg, Afwan (4).jpeg), Afwan (5).jpeg -->
+  <!-- Dokumentasi Section (Afwan-Maksum 1.jpg, Afwan-Maksum 2.jpg, Afwan-Maksum-IKASI.jpg) -->
   <section id="dokumentasi">
     <div class="container">
       <h2 class="section-title">Kegiatan & Dokumentasi Komunitas</h2>
