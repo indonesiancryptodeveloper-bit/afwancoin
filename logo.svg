@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Circle Koin -->
+  <circle cx="16" cy="16" r="15" fill="#0f172a" stroke="url(#gold)" stroke-width="2"/>
+  <!-- Inner Ring -->
+  <circle cx="16" cy="16" r="12" fill="none" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="2 1"/>
+  <!-- Inisial AC -->
+  <text x="16" y="21.5" font-family="Arial, sans-serif" font-size="12" font-weight="900" fill="#fbbf24" text-anchor="middle" letter-spacing="-0.5">AC</text>
+</svg>
