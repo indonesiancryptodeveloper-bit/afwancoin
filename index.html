@@ -1,0 +1,385 @@
+import base64
+import os
+from PIL import Image
+import io
+
+# We need to load all images provided and convert them into base64 data URIs so they can be embedded directly into index.html without uploading.
+# Image filenames from context:
+# image_0aea65.png (Man in suit)
+# image_0aed8a.png (Man in white baju koko & peci)
+# image_0aedb0.jpg (Man with glasses speaking into microphone)
+# image_0aee68.png (Man in black shirt selfie with crowd)
+# image_0af151.jpg (Man receiving document at Gerindra Tuban banner)
+
+image_paths = [
+    'image_0aea65.png',
+    'image_0aed8a.png',
+    'image_0aedb0.jpg',
+    'image_0aee68.png',
+    'image_0af151.jpg'
+]
+
+base64_images = []
+
+for img_path in image_paths:
+    if os.path.exists(img_path):
+        with open(img_path, 'rb') as f:
+            data = f.read()
+            ext = img_path.split('.')[-1]
+            if ext == 'jpg': ext = 'jpeg'
+            b64_str = f"data:image/{ext};base64," + base64.b64encode(data).decode('utf-8')
+            base64_images.append(b64_str)
+    else:
+        print(f"File not found: {img_path}")
+
+print(f"Loaded {len(base64_images)} images successfully.")
+
+# Create the HTML content
+html_content = f"""<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFWAN COIN (AC) - Token BEP-20 Malang Raya</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {{
+            --primary-color: #f0b90b;
+            --secondary-color: #1e2329;
+            --dark-bg: #0b0e11;
+            --card-bg: #181a20;
+            --text-muted: #848e9c;
+        }}
+        
+        body {{
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }}
+        
+        .navbar {{
+            background-color: rgba(30, 35, 41, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #2b313a;
+        }}
+        
+        .navbar-brand {{
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.5rem;
+        }}
+        
+        .nav-link {{
+            color: #eaeaea !important;
+            font-weight: 500;
+        }}
+        
+        .nav-link:hover {{
+            color: var(--primary-color) !important;
+        }}
+        
+        .hero-section {{
+            padding: 100px 0 60px;
+            background: radial-gradient(circle at 50% 30%, #2b2510 0%, #0b0e11 70%);
+        }}
+        
+        .badge-bep {{
+            background-color: rgba(240, 185, 11, 0.15);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+        }}
+        
+        .custom-card {{
+            background-color: var(--card-bg);
+            border: 1px solid #2b313a;
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            height: 100%;
+        }}
+        
+        .custom-card:hover {{
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }}
+        
+        .profile-img {{
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #2b313a;
+        }}
+        
+        .btn-primary-custom {{
+            background-color: var(--primary-color);
+            color: #000;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 8px;
+            border: none;
+            transition: all 0.2s;
+        }}
+        
+        .btn-primary-custom:hover {{
+            background-color: #fcd535;
+            color: #000;
+        }}
+        
+        .btn-outline-custom {{
+            border: 1px solid #474d57;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 8px;
+            background: transparent;
+            transition: all 0.2s;
+        }}
+        
+        .btn-outline-custom:hover {{
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }}
+        
+        .contract-box {{
+            background-color: #1e2329;
+            border: 1px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 15px;
+            word-break: break-all;
+        }}
+        
+        footer {{
+            background-color: var(--secondary-color);
+            border-top: 1px solid #2b313a;
+            padding: 30px 0;
+            color: var(--text-muted);
+        }}
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-coins me-2"></i>AFWAN COIN</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#keunggulan">Keunggulan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tokenomics">Tokenomics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tokoh">Penggerak Komunitas</a></li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-primary-custom btn-sm text-dark px-3 py-2" href="https://bscscan.com/address/0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822" target="_blank">
+                            <i class="fa-solid fa-shield-halved me-1"></i> BscScan Verified
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center text-lg-start">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <span class="badge-bep mb-3"><i class="fa-solid fa-bolt me-1"></i> BEP-20 BNB Smart Chain</span>
+                    <h1 class="display-4 fw-bold mb-3">AFWAN COIN <span style="color: var(--primary-color);">(AC)</span></h1>
+                    <p class="lead text-light mb-4">
+                        Aset Digital Masa Depan Komunitas Malang Raya. Dirancang untuk memperkuat ekosistem digital lokal, mendorong inklusi keuangan, dan menghubungkan jutaan penduduk Malang Jawa Timur dalam satu jaringan ekonomi kreatif berbasis blockchain.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start mb-4">
+                        <a href="#tokenomics" class="btn btn-primary-custom"><i class="fa-solid fa-wallet me-2"></i>Lihat Tokenomics</a>
+                        <a href="https://bscscan.com/address/0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822" target="_blank" class="btn btn-outline-custom"><i class="fa-solid fa-magnifying-glass me-2"></i>Cek Contract</a>
+                    </div>
+                </div>
+                <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                    <div class="custom-card p-4 text-center">
+                        <img src="{base64_images[0]}" alt="Tokoh AFWAN COIN" class="profile-img mb-3">
+                        <h5 class="fw-bold mb-1">Inisiatif & Kepemimpinan</h5>
+                        <p class="text-muted small">Menggerakkan Inovasi Teknologi & Ekonomi Komunitas Malang Raya</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Smart Contract Box -->
+    <section class="py-4">
+        <div class="container">
+            <div class="contract-box text-center">
+                <span class="text-muted d-block mb-1"><i class="fa-solid fa-file-contract me-1"></i> Smart Contract Address (BEP-20)</span>
+                <h5 class="fw-bold text-warning mb-2">0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822</h5>
+                <span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i> Verified & Published di BscScan</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tentang Section -->
+    <section id="tentang" class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <img src="{base64_images[4]}" alt="Gerakan Komunitas" class="img-fluid rounded-4 border border-secondary">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="fw-bold mb-3" style="color: var(--primary-color);">Tentang AFWAN COIN</h2>
+                    <p>
+                        <strong>AFWAN COIN (AC)</strong> hadir sebagai terobosan teknologi blockchain yang diposisikan untuk menggerakkan potensi ekonomi digital di Jawa Timur, berpusat di wilayah Malang Raya.
+                    </p>
+                    <p class="text-muted">
+                        Dengan proyeksi basis komunitas yang mencakup jutaan potensi holder—mulai dari generasi muda, pelaku UMKM, hingga komunitas kreatif—AFWAN COIN membangun fondasi aset digital yang solid, inklusif, dan efisien.
+                    </p>
+                    <p class="text-muted">
+                        Berjalan di atas jaringan BNB Smart Chain (BEP-20) dengan total pasokan terbatas (Total Supply) sebanyak <strong>10.000.000 AC</strong>, AFWAN COIN mengombinasikan keunggulan transaksi super cepat, biaya gas yang minim, serta transparansi penuh melalui smart contract yang terverifikasi di BscScan.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Keunggulan Section -->
+    <section id="keunggulan" class="py-5 style-bg" style="background-color: var(--secondary-color);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold" style="color: var(--primary-color);">Keunggulan Utama</h2>
+                <p class="text-muted">Nilai lebih AFWAN COIN bagi pemegang token dan masyarakat</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="custom-card text-center">
+                        <i class="fa-solid fa-users-gear fa-3x text-warning mb-3"></i>
+                        <h5>Komunitas Masif</h5>
+                        <p class="text-muted small">Berfokus pada penguatan ekosistem lokal Malang Jawa Timur, menghubungkan jaringan bisnis, kampus, dan UMKM.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="custom-card text-center">
+                        <i class="fa-solid fa-chart-pie fa-3x text-warning mb-3"></i>
+                        <h5>Pasokan Terbatas</h5>
+                        <p class="text-muted small">Hanya ada 10 Juta AC. Kelangkaan (scarcity) terjamin seiring bertumbuhnya adopsi pengguna.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="custom-card text-center">
+                        <i class="fa-solid fa-shield-check fa-3x text-warning mb-3"></i>
+                        <h5>Smart Contract Verified</h5>
+                        <p class="text-muted small">Transparansi total dengan kode sumber yang terverifikasi 100% di BscScan.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="custom-card text-center">
+                        <i class="fa-solid fa-fire fa-3x text-warning mb-3"></i>
+                        <h5>Fitur Burnable</h5>
+                        <p class="text-muted small">Dilengkapi fungsi pembakaran token bawaan untuk menjaga stabilitas jangka panjang.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tokenomics Section -->
+    <section id="tokenomics" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold" style="color: var(--primary-color);">Spesifikasi Tokenomics</h2>
+                <p class="text-muted">Detail teknis AFWAN COIN (AC)</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="custom-card">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover mb-0 align-middle">
+                                <tbody>
+                                    <tr>
+                                        <td><strong class="text-warning">Nama Token</strong></td>
+                                        <td>AFWAN COIN</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Simbol</strong></td>
+                                        <td>AC</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Standar Jaringan</strong></td>
+                                        <td>BEP-20 (BNB Smart Chain)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Total Supply</strong></td>
+                                        <td>10.000.000 AC</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Decimals</strong></td>
+                                        <td>18</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-warning">Status Contract</strong></td>
+                                        <td><span class="badge bg-success">Verified di BscScan</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeri & Tokoh Section -->
+    <section id="tokoh" class="py-5" style="background-color: var(--secondary-color);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold" style="color: var(--primary-color);">Kegiatan & Dokumentasi Komunitas</h2>
+                <p class="text-muted">Inisiatif sosial, jaringan politik, dan pergerakan masyarakat lokal</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="custom-card p-2 text-center">
+                        <img src="{base64_images[1]}" alt="Tokoh Berbusana Muslim" class="profile-img mb-3">
+                        <h6 class="fw-bold mb-1">Dekat Dengan Tokoh Agama & Masyarakat</h6>
+                        <p class="text-muted extra-small">Menjunjung nilai kebersamaan dan kearifan lokal Malang Raya.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="custom-card p-2 text-center">
+                        <img src="{base64_images[2]}" alt="Tokoh Diskusi" class="profile-img mb-3">
+                        <h6 class="fw-bold mb-1">Forum Diskusi & Inovasi</h6>
+                        <p class="text-muted extra-small">Aktif membangun narasi ekonomi kreatif digital di ruang publik.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="custom-card p-2 text-center">
+                        <img src="{base64_images[3]}" alt="Dokumentasi Acara" class="profile-img mb-3">
+                        <h6 class="fw-bold mb-1">Basis Massa Komunitas</h6>
+                        <p class="text-muted extra-small">Memiliki jaringan pendukung yang kuat dan siap teredukasi crypto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-2"><strong>AFWAN COIN (AC)</strong> &copy; 2026. Empowering Malang Raya Digital Economy.</p>
+            <p class="small text-muted mb-0">Built on BNB Smart Chain (BEP-20) | Contract: 0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("index.html successfully created with embedded base64 images!")
