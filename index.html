@@ -37,9 +37,6 @@
       align-items: center;
     }
     .logo-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
       font-weight: bold;
       color: #f59e0b;
       font-size: 1.1rem;
@@ -122,7 +119,7 @@
       font-size: 0.9rem;
     }
 
-    /* Hero Card (Foto Utama Perbaikan Kepala Utuh) */
+    /* Hero Card (Memperbaiki foto jas tanpa kepala) */
     .hero-card {
       background-color: #151a23;
       border: 1px solid #242c3d;
@@ -145,7 +142,7 @@
     .hero-img-box img {
       width: 100%;
       height: 100%;
-      object-fit: contain !important; /* MEMASTIKAN FOTO TAMPIL UTUH DARI KEPALA */
+      object-fit: contain !important; /* MEMASTIKAN KEPALA KELIHATAN PENUH */
       display: block;
     }
     .hero-card-title {
@@ -154,7 +151,7 @@
       font-weight: 600;
     }
 
-    /* Logo Animated Container */
+    /* Logo Animated Section */
     .logo-ac-section {
       text-align: center;
       margin: 40px 0 20px 0;
@@ -184,9 +181,10 @@
     }
     .banner-image {
       width: 100%;
+      max-width: 600px;
+      margin: 0 auto 45px auto;
       border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 45px;
       border: 1px solid #242c3d;
     }
     .banner-image img {
@@ -224,7 +222,7 @@
       color: #e2e8f0;
     }
 
-    /* Spesifikasi Tokenomika */
+    /* Tokenomics Table */
     .tokenomics-table {
       width: 100%;
       max-width: 650px;
@@ -251,7 +249,7 @@
       font-weight: bold;
     }
 
-    /* Dokumentasi Komunitas */
+    /* Dokumentasi Section */
     .doc-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -268,7 +266,7 @@
     }
     .doc-img-box {
       width: 100%;
-      height: 200px;
+      height: 220px;
       overflow: hidden;
     }
     .doc-img-box img {
@@ -293,13 +291,11 @@
 </head>
 <body>
 
-  <!-- Header / Navbar -->
+  <!-- Header -->
   <header>
     <div class="container">
       <nav>
-        <div class="logo-brand">
-          <span>AFWAN COIN (AC)</span>
-        </div>
+        <div class="logo-brand">AFWAN COIN (AC)</div>
         <ul class="nav-links">
           <li><a href="#tentang">Tentang</a></li>
           <li><a href="#keunggulan">Keunggulan</a></li>
@@ -325,18 +321,18 @@
           </div>
         </div>
 
-        <!-- Foto Utama Profil (Afwan-Maksum.jpg) -->
+        <!-- Foto Profil Utama Hero (Afwan (1).jpeg) -->
         <div class="hero-card">
           <div class="hero-img-box">
-            <img src="Afwan-Maksum.jpg" alt="Inisiatif & Kepemimpinan - Afwan Maksum">
+            <img src="Afwan (1).jpeg" alt="Inisiatif & Kepemimpinan">
           </div>
           <div class="hero-card-title">Inisiatif & Kepemimpinan</div>
         </div>
       </div>
 
-      <!-- Animated Logo AC BEP20 Section -->
+      <!-- Animated Logo AC BEP20 Section (Afwan (2).jpeg) -->
       <div class="logo-ac-section">
-        <svg viewBox="0 0 500 500" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 500 500" width="220" height="220" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <defs>
             <linearGradient id="goldFuturistic" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#ffe066" />
@@ -353,14 +349,13 @@
             </clipPath>
           </defs>
 
-          <!-- Outer Tech Cyber Ring (Berputar) -->
+          <!-- Outer Cyber Rings -->
           <circle class="outer-cyber-ring" cx="250" cy="250" r="230" fill="none" stroke="url(#goldFuturistic)" stroke-width="5" stroke-dasharray="120 30 60 30 20 10"/>
           <circle class="inner-tech-ring" cx="250" cy="250" r="218" fill="none" stroke="url(#cyberBlue)" stroke-width="3" stroke-dasharray="40 40 80 20"/>
 
-          <!-- Base Coin Body -->
           <circle cx="250" cy="250" r="205" fill="#0f172a" stroke="url(#goldFuturistic)" stroke-width="8" />
 
-          <!-- Curved Text Top & Bottom -->
+          <!-- Curved Text -->
           <path id="textPathTop" d="M 60 250 A 190 190 0 0 1 440 250" fill="none" />
           <path id="textPathBottom" d="M 440 250 A 190 190 0 0 1 60 250" fill="none" />
 
@@ -374,7 +369,7 @@
           <!-- Avatar Frame -->
           <circle cx="250" cy="225" r="127" fill="none" stroke="url(#goldFuturistic)" stroke-width="4" />
           <g clip-path="url(#avatarClip)">
-            <image href="Afwan-Maksum.jpg" x="115" y="70" width="270" height="290" preserveAspectRatio="xMidYMin slice" />
+            <image href="Afwan (2).jpeg" x="115" y="70" width="270" height="290" preserveAspectRatio="xMidYMin slice" />
           </g>
 
           <!-- AC TOKEN Badge -->
@@ -389,9 +384,9 @@
         ✔ Verified & Audited Smart Contract di BscScan
       </div>
 
-      <!-- Banner Tengah (afwan_maksum_pdip.jpg) -->
+      <!-- Banner Tengah Pidato (Afwan (3).jpeg) -->
       <div class="banner-image">
-        <img src="Afwan (5).jpeg" alt="Tentang AFWAN COIN">
+        <img src="Afwan (3).jpeg" alt="Pidato Afwan Maksum">
       </div>
     </div>
   </section>
@@ -458,20 +453,20 @@
     </div>
   </section>
 
-  <!-- Dokumentasi Section (Afwan (1).jpeg, Afwan (2).jpeg, Afwan-Maksum-IKASI.jpg) -->
+  <!-- Dokumentasi Section (Afwan (4).jpeg, Afwan (5).jpeg, Afwan-Maksum-IKASI.jpg) -->
   <section id="dokumentasi">
     <div class="container">
       <h2 class="section-title">Kegiatan & Dokumentasi Komunitas</h2>
       <div class="doc-grid">
         <div class="doc-card">
           <div class="doc-img-box">
-            <img src="Afwan (3).jpeg" alt="Kualifikasi & Kebersamaan">
+            <img src="Afwan (4).jpeg" alt="Kegiatan Komunitas 1">
           </div>
           <p>Kualifikasi & Kebersamaan</p>
         </div>
         <div class="doc-card">
           <div class="doc-img-box">
-            <img src="Afwan (4).jpeg" alt="Peran Inisiatif & Inovasi">
+            <img src="Afwan (5).jpeg" alt="Kegiatan Komunitas 2">
           </div>
           <p>Peran Inisiatif & Inovasi</p>
         </div>
