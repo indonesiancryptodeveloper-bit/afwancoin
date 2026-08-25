@@ -1,115 +1,114 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AFWAN COIN - Staking DApp</title>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; background: #121212; color: #fff; text-align: center; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        button { background: #f0b90b; color: #000; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin: 8px 0; }
-        input { width: 90%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; }
-        .box { background: #2a2a2a; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: left; }
-    </style>
-</head>
-<body>
+<!-- MODERN STAKING DAPP SECTION -->
+<style>
+  .staking-card {
+    background: linear-gradient(145deg, #131722, #1a1f2c);
+    border: 1px solid #f0b90b;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(240, 185, 11, 0.15);
+    color: #fff;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px 25px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .staking-badge {
+    background: rgba(240, 185, 11, 0.1);
+    border: 1px solid #f0b90b;
+    color: #f0b90b;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .btn-web3 {
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 12px;
+    width: 100%;
+    margin: 6px 0;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, #f0b90b, #f3ba2f);
+    color: #000;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 15px rgba(240, 185, 11, 0.5);
+    transform: translateY(-1px);
+  }
+  .btn-action {
+    background: #2b313a;
+    color: #fff;
+    border: 1px solid #3a414d;
+  }
+  .btn-action:hover {
+    background: #3a414d;
+    border-color: #f0b90b;
+  }
+  .btn-danger {
+    background: rgba(229, 62, 62, 0.1);
+    color: #e53e3e;
+    border: 1px solid #e53e3e;
+  }
+  .btn-danger:hover {
+    background: #e53e3e;
+    color: #fff;
+  }
+  .staking-box {
+    background: #0b0e14;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 1px solid #2a2e3d;
+    text-align: left;
+  }
+  .staking-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #2a2e3d;
+    background: #131722;
+    color: #fff;
+    font-size: 1rem;
+    box-sizing: border-box;
+    margin: 8px 0;
+  }
+  .staking-input:focus {
+    outline: none;
+    border-color: #f0b90b;
+  }
+</style>
 
-<div class="container">
-    <h2>AFWAN COIN Staking</h2>
-    <button id="btnConnect" onclick="connectWallet()">Hubungkan Wallet</button>
-    <p id="walletAddress" style="font-size: 12px; color: #aaa;"></p>
-
-    <div class="box">
-        <h4>Stake AC Token</h4>
-        <input type="number" id="stakeAmount" placeholder="Jumlah AC (contoh: 1000)">
-        <button onclick="approveAC()">1. Approve AC</button>
-        <button onclick="stakeAC()">2. Stake AC</button>
-    </div>
-
-    <div class="box">
-        <h4>Informasi & Klaim</h4>
-        <p>Est. Reward Anda: <span id="rewardAmount">0</span> AC</p>
-        <button onclick="claimReward()">Klaim Reward</button>
-        <button onclick="withdrawAC()" style="background:#e53e3e; color:#fff;">Withdraw Stake</button>
-    </div>
-</div>
-
-<script>
-const STAKING_ADDRESS = "0xA14e72742d6e4dF4c429DbCDedf409c3674B3D0C";
-const TOKEN_ADDRESS = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
-
-const TOKEN_ABI = [
-    "function approve(address spender, uint256 amount) public returns (bool)"
-];
-const STAKING_ABI = [
-    "function stake(uint256 _amount, bool _isLP) external",
-    "function withdraw(uint256 _amount, bool _isLP) external",
-    "function claimReward(bool _isLP) external",
-    "function calculateReward(address _user, bool _isLP) public view returns (uint256)"
-];
-
-let provider, signer, stakingContract, tokenContract, userAddress;
-
-async function connectWallet() {
-    if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = provider.getSigner();
-        userAddress = await signer.getAddress();
-        document.getElementById("walletAddress").innerText = "Connected: " + userAddress;
-        document.getElementById("btnConnect").innerText = "Wallet Terhubung";
+<section id="staking" class="staking-card">
+    <div style="text-align: center;">
+        <span class="staking-badge">⚡ WEB3 LIVE VAULT</span>
+        <h2 style="color: #f0b90b; margin: 5px 0 10px 0; font-size: 1.8rem;">AFWAN COIN Staking Vault</h2>
+        <p style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 20px;">Kunci Token AC Anda untuk Mendapatkan Rewards Harian secara Otomatis</p>
         
-        stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
-        tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
-        updateReward();
-    } else {
-        alert("Silakan install MetaMask!");
-    }
-}
+        <button id="btnConnect" onclick="connectWallet()" class="btn-web3 btn-primary" style="font-size: 1rem;">Hubungkan Wallet (MetaMask)</button>
+        <p id="walletAddress" style="font-size: 12px; color: #f0b90b; margin-top: 8px; font-weight: bold; word-break: break-all;"></p>
+    </div>
 
-async function approveAC() {
-    const amount = document.getElementById("stakeAmount").value;
-    if(!amount) return alert("Masukkan jumlah AC");
-    const parsedAmount = ethers.utils.parseUnits(amount, 18);
-    const tx = await tokenContract.approve(STAKING_ADDRESS, parsedAmount);
-    await tx.wait();
-    alert("Approve Berhasil!");
-}
+    <div class="staking-box">
+        <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">1. Stake AC Token</h4>
+        <input type="number" id="stakeAmount" placeholder="Jumlah AC (contoh: 1000)" class="staking-input">
+        <div style="display: flex; gap: 8px;">
+            <button onclick="approveAC()" class="btn-web3 btn-primary">1. Approve AC</button>
+            <button onclick="stakeAC()" class="btn-web3 btn-action">2. Stake AC</button>
+        </div>
+    </div>
 
-async function stakeAC() {
-    const amount = document.getElementById("stakeAmount").value;
-    if(!amount) return alert("Masukkan jumlah AC");
-    const parsedAmount = ethers.utils.parseUnits(amount, 18);
-    const tx = await stakingContract.stake(parsedAmount, false);
-    await tx.wait();
-    alert("Staking Berhasil!");
-    updateReward();
-}
-
-async function claimReward() {
-    const tx = await stakingContract.claimReward(false);
-    await tx.wait();
-    alert("Klaim Reward Berhasil!");
-    updateReward();
-}
-
-async function withdrawAC() {
-    const amount = document.getElementById("stakeAmount").value;
-    if(!amount) return alert("Masukkan jumlah AC yang ingin ditarik");
-    const parsedAmount = ethers.utils.parseUnits(amount, 18);
-    const tx = await stakingContract.withdraw(parsedAmount, false);
-    await tx.wait();
-    alert("Penarikan Berhasil!");
-    updateReward();
-}
-
-async function updateReward() {
-    if(stakingContract && userAddress) {
-        const reward = await stakingContract.calculateReward(userAddress, false);
-        document.getElementById("rewardAmount").innerText = ethers.utils.formatUnits(reward, 18);
-    }
-}
-</script>
-</body>
-</html>
+    <div class="staking-box">
+        <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">2. Informasi & Klaim Reward</h4>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #131722; padding: 12px; border-radius: 8px; margin: 10px 0; border: 1px solid #2a2e3d;">
+            <span style="font-size: 0.85rem; color: #a0aec0;">Est. Reward Anda:</span>
+            <b style="font-size: 1.2rem; color: #f0b90b;"><span id="rewardAmount">0</span> AC</b>
+        </div>
+        <button onclick="claimReward()" class="btn-web3 btn-primary">Klaim Reward</button>
+        <button onclick="withdrawAC()" class="btn-web3 btn-danger">Withdraw Stake</button>
+    </div>
+</section>
