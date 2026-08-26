@@ -499,26 +499,33 @@
         "function calculateReward(address account) public view returns (uint256)"
     ];
 
-    let provider, signer, userAddress;
+    let provider, userAddress;
+
+    // Helper untuk memastikan Provider dan Signer selalu aktif
+    async function getSignerAndAddress() {
+        if (typeof window.ethereum === 'undefined') {
+            alert("MetaMask tidak terdeteksi! Harap gunakan browser MetaMask atau install ekstensi MetaMask.");
+            return null;
+        }
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const activeSigner = provider.getSigner();
+        userAddress = await activeSigner.getAddress();
+        return activeSigner;
+    }
 
     async function connectWallet() {
-        if (typeof window.ethereum !== 'undefined') {
-            try {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                signer = provider.getSigner();
-                userAddress = await signer.getAddress();
-                
-                document.getElementById("walletAddress").innerText = "Terhubung: " + userAddress.substring(0,6) + "..." + userAddress.substring(userAddress.length - 4);
-                document.getElementById("btnConnect").innerText = "Wallet Terhubung ✓";
-                
-                await updateDashboardAndRewards();
-            } catch (err) {
-                console.error(err);
-                alert("Gagal menghubungkan wallet: " + err.message);
-            }
-        } else {
-            alert("MetaMask tidak terdeteksi! Harap gunakan browser Web3 atau buka via MetaMask In-App Browser.");
+        try {
+            const activeSigner = await getSignerAndAddress();
+            if (!activeSigner) return;
+
+            document.getElementById("walletAddress").innerText = "Terhubung: " + userAddress.substring(0,6) + "..." + userAddress.substring(userAddress.length - 4);
+            document.getElementById("btnConnect").innerText = "Wallet Terhubung ✓";
+            
+            await updateDashboardAndRewards();
+        } catch (err) {
+            console.error("Connect Wallet Error:", err);
+            alert("Gagal menghubungkan wallet: " + (err.reason || err.message));
         }
     }
 
@@ -529,15 +536,15 @@
             const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
             const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, provider);
 
-            // 1. Baca Saldo Wallet On-Chain
+            // 1. Baca Saldo Wallet
             const rawBalance = await tokenContract.balanceOf(userAddress);
             const walletAC = parseFloat(ethers.utils.formatUnits(rawBalance, 18));
 
-            // 2. Baca Jumlah AC di Staking Vault
+            // 2. Baca Jumlah Staking
             const stakerInfo = await stakingContract.stakers(userAddress);
             const stakedAC = parseFloat(ethers.utils.formatUnits(stakerInfo.amount, 18));
 
-            // 3. Baca Estimasi Reward
+            // 3. Baca Reward
             let earnedReward = 0;
             try {
                 const rawReward = await stakingContract.calculateReward(userAddress);
@@ -547,84 +554,101 @@
             }
 
             // Update UI Dashboard Analytics
-            document.getElementById("dashWalletBalance").innerText = walletAC.toLocaleString('en-US', {maximumFractionDigits: 2});
-            document.getElementById("dashStakedBalance").innerText = stakedAC.toLocaleString('en-US', {maximumFractionDigits: 2});
-            document.getElementById("dashTotalAssets").innerText = (walletAC + stakedAC).toLocaleString('en-US', {maximumFractionDigits: 2});
+            if (document.getElementById("dashWalletBalance")) {
+                document.getElementById("dashWalletBalance").innerText = walletAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+                document.getElementById("dashStakedBalance").innerText = stakedAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+                document.getElementById("dashTotalAssets").innerText = (walletAC + stakedAC).toLocaleString('en-US', {maximumFractionDigits: 2});
+                document.getElementById("userDashboard").style.display = "block";
+            }
             document.getElementById("rewardAmount").innerText = earnedReward.toLocaleString('en-US', {maximumFractionDigits: 4});
 
-            document.getElementById("userDashboard").style.display = "block";
         } catch (err) {
             console.error("Gagal update data on-chain:", err);
         }
     }
 
     async function approveAC() {
-        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
         const amount = document.getElementById("stakeAmount").value;
         if (!amount || amount <= 0) return alert("Masukkan jumlah AC yang valid!");
 
         try {
-            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+            const activeSigner = await getSignerAndAddress();
+            if (!activeSigner) return;
+
+            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, activeSigner);
             const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+
+            alert("Konfirmasi transaksi Approve di popup MetaMask Anda...");
             const tx = await tokenContract.approve(STAKING_ADDRESS, parsedAmount);
-            alert("Transaksi Approve dikirim ke blockchain. Menunggu konfirmasi...");
+            alert("Transaksi Approve telah dikirim. Menunggu konfirmasi blockchain...");
             await tx.wait();
-            alert("Approve Berhasil! Silakan klik tombol '2. Stake AC'.");
+            alert("Approve Berhasil! Sekarang silakan klik tombol '2. Stake AC'.");
         } catch (err) {
-            console.error(err);
+            console.error("Approve Error:", err);
             alert("Approve Gagal: " + (err.reason || err.message));
         }
     }
 
     async function stakeAC() {
-        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
         const amount = document.getElementById("stakeAmount").value;
         if (!amount || amount <= 0) return alert("Masukkan jumlah AC yang valid!");
 
         try {
-            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+            const activeSigner = await getSignerAndAddress();
+            if (!activeSigner) return;
+
+            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, activeSigner);
             const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+
+            alert("Konfirmasi transaksi Stake di popup MetaMask Anda...");
             const tx = await stakingContract.stake(parsedAmount);
-            alert("Transaksi Stake dikirim. Menunggu konfirmasi...");
+            alert("Transaksi Stake telah dikirim. Menunggu konfirmasi...");
             await tx.wait();
             alert("Selamat! Token AC Anda berhasil di-stake.");
             await updateDashboardAndRewards();
         } catch (err) {
-            console.error(err);
+            console.error("Staking Error:", err);
             alert("Staking Gagal: " + (err.reason || err.message));
         }
     }
 
     async function claimReward() {
-        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
         try {
-            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+            const activeSigner = await getSignerAndAddress();
+            if (!activeSigner) return;
+
+            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, activeSigner);
+            alert("Konfirmasi transaksi Klaim di popup MetaMask Anda...");
             const tx = await stakingContract.claimReward();
             alert("Transaksi Klaim dikirim. Menunggu konfirmasi...");
             await tx.wait();
             alert("Reward berhasil diklaim ke wallet Anda!");
             await updateDashboardAndRewards();
         } catch (err) {
-            console.error(err);
+            console.error("Claim Error:", err);
             alert("Klaim Gagal: " + (err.reason || err.message));
         }
     }
 
     async function withdrawAC() {
-        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
         const amount = prompt("Masukkan jumlah AC yang ingin Anda withdraw/tarik:");
         if (!amount || amount <= 0) return;
 
         try {
-            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+            const activeSigner = await getSignerAndAddress();
+            if (!activeSigner) return;
+
+            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, activeSigner);
             const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+            
+            alert("Konfirmasi transaksi Withdraw di popup MetaMask Anda...");
             const tx = await stakingContract.withdraw(parsedAmount);
             alert("Transaksi Withdraw dikirim. Menunggu konfirmasi...");
             await tx.wait();
             alert("Withdraw berhasil! Token telah dikembalikan ke wallet Anda.");
             await updateDashboardAndRewards();
         } catch (err) {
-            console.error(err);
+            console.error("Withdraw Error:", err);
             alert("Withdraw Gagal: " + (err.reason || err.message));
         }
     }
