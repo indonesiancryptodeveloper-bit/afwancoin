@@ -532,36 +532,40 @@
 <!-- Web3 Integration Script -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
-const STAKING_ADDRESS = "0xA14e72742d6e4dF4c429DbCDedf409c3674B3D0C";
-const TOKEN_ADDRESS = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
+  // ABI tambahan untuk membaca saldo token & jumlah stake
+const TOKEN_READ_ABI = ["function balanceOf(address account) public view returns (uint256)"];
+const STAKING_READ_ABI = ["function stakers(address account) public view returns (uint256 amount, uint256 rewardAllowed, uint256 rewardPaid)"];
 
-const TOKEN_ABI = ["function approve(address spender, uint256 amount) public returns (bool)"];
-const STAKING_ABI = [
-    "function stake(uint256 _amount, bool _isLP) external",
-    "function withdraw(uint256 _amount, bool _isLP) external",
-    "function claimReward(bool _isLP) external",
-    "function calculateReward(address _user, bool _isLP) public view returns (uint256)"
-];
+async function loadWeb3Analytics() {
+    if (!userAddress || !signer) return;
 
-let provider, signer, stakingContract, tokenContract, userAddress;
+    try {
+        // Inisialisasi Contract Read
+        const tokenContractRead = new ethers.Contract(TOKEN_ADDRESS, TOKEN_READ_ABI, provider);
+        const stakingContractRead = new ethers.Contract(STAKING_ADDRESS, STAKING_READ_ABI, provider);
 
-async function connectWallet() {
-    if (window.ethereum) {
-        try {
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send("eth_requestAccounts", []);
-            signer = provider.getSigner();
-            userAddress = await signer.getAddress();
-            document.getElementById("walletAddress").innerText = "Connected: " + userAddress;
-            document.getElementById("btnConnect").innerText = "Wallet Terhubung ✓";
-            document.getElementById("btnConnect").style.background = "#38a169";
-            document.getElementById("btnConnect").style.color = "#fff";
-            
-            stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
-            tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
-            updateReward();
-        } catch(e) { alert("Gagal menghubungkan wallet."); }
-    } else { alert("Silakan install ekstensi MetaMask!"); }
+        // 1. Baca Saldo AC di Wallet
+        const rawBalance = await tokenContractRead.balanceOf(userAddress);
+        const walletAC = parseFloat(ethers.utils.formatUnits(rawBalance, 18));
+
+        // 2. Baca Jumlah AC yang di-stake
+        const stakerInfo = await stakingContractRead.stakers(userAddress);
+        const stakedAC = parseFloat(ethers.utils.formatUnits(stakerInfo.amount, 18));
+
+        // 3. Hitung Total Aset Portofolio
+        const totalAC = walletAC + stakedAC;
+
+        // Render ke Tampilan Dashboard
+        document.getElementById("dashWalletBalance").innerText = walletAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById("dashStakedBalance").innerText = stakedAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById("dashTotalAssets").innerText = totalAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+
+        // Tampilkan Box Dashboard
+        document.getElementById("userDashboard").style.display = "block";
+
+    } catch (error) {
+        console.error("Gagal memuat Web3 Analytics:", error);
+    }
 }
 
 async function approveAC() {
