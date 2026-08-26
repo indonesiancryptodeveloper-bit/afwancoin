@@ -1,670 +1,629 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AFWAN COIN (AC) - Official Ecosystem & Web3 Staking Vault</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #0b0e14;
-            color: #e2e8f0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            scroll-behavior: smooth;
-        }
-        a {
-            color: #f0b90b;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        a:hover {
-            color: #f3ba2f;
-            text-decoration: underline;
-        }
-        
-        /* HEADER & NAVIGATION WITH LOGO COIN */
-        header {
-            background: #131722;
-            border-bottom: 1px solid #2a2e3d;
-            padding: 12px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .logo-img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-            border-radius: 50%;
-        }
-        .logo-text {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #f0b90b;
-            letter-spacing: 1px;
-        }
-        nav a {
-            margin-left: 20px;
-            color: #a0aec0;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-        nav a:hover {
-            color: #f0b90b;
-        }
-        
-        /* LAYOUT CONTAINER */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        
-        /* HERO SECTION */
-        .hero {
-            text-align: center;
-            padding: 60px 20px;
-            background: radial-gradient(circle at center, rgba(240, 185, 11, 0.12) 0%, rgba(11, 14, 20, 1) 70%);
-        }
-        .hero-logo-large {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 15px rgba(240, 185, 11, 0.4));
-        }
-        .hero h1 {
-            font-size: 2.8rem;
-            color: #f0b90b;
-            margin-bottom: 15px;
-            text-shadow: 0 0 20px rgba(240, 185, 11, 0.3);
-        }
-        .hero p {
-            font-size: 1.1rem;
-            color: #a0aec0;
-            max-width: 750px;
-            margin: 0 auto 30px;
-        }
-        
-        .section-title {
-            text-align: center;
-            font-size: 2rem;
-            color: #fff;
-            margin-bottom: 30px;
-            position: relative;
-        }
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: #f0b90b;
-            margin: 10px auto 0;
-            border-radius: 2px;
-            box-shadow: 0 0 10px #f0b90b;
-        }
-        
-        /* STAKING DAPP CARD */
-        .staking-card {
-            background: linear-gradient(145deg, #131722, #1a1f2c);
-            border: 1px solid #f0b90b;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(240, 185, 11, 0.15);
-            max-width: 650px;
-            margin: 0 auto 60px;
-            padding: 30px 25px;
-        }
-        .staking-badge {
-            background: rgba(240, 185, 11, 0.1);
-            border: 1px solid #f0b90b;
-            color: #f0b90b;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .btn-web3 {
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 12px;
-            width: 100%;
-            margin: 6px 0;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #f0b90b, #f3ba2f);
-            color: #000;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 0 15px rgba(240, 185, 11, 0.5);
-            transform: translateY(-1px);
-        }
-        .btn-action {
-            background: #2b313a;
-            color: #fff;
-            border: 1px solid #3a414d;
-        }
-        .btn-action:hover {
-            background: #3a414d;
-            border-color: #f0b90b;
-        }
-        .btn-danger {
-            background: rgba(229, 62, 62, 0.1);
-            color: #e53e3e;
-            border: 1px solid #e53e3e;
-        }
-        .btn-danger:hover {
-            background: #e53e3e;
-            color: #fff;
-        }
-        .staking-box {
-            background: #0b0e14;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            border: 1px solid #2a2e3d;
-            text-align: left;
-        }
-        .staking-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #2a2e3d;
-            background: #131722;
-            color: #fff;
-            font-size: 1rem;
-            box-sizing: border-box;
-            margin: 8px 0;
-        }
-        .staking-input:focus {
-            outline: none;
-            border-color: #f0b90b;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .dash-item {
-            background: #131722;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #1e232d;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AFWAN COIN (AC) - BEP20 Official</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
 
-        /* GRID SECTIONS & CARDS */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 60px;
-        }
-        .card {
-            background: #131722;
-            border: 1px solid #2a2e3d;
-            border-radius: 12px;
-            padding: 25px;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: #f0b90b;
-        }
-        .card h3 {
-            color: #f0b90b;
-            margin-bottom: 10px;
-        }
+    /* Header & Navigation */
+    header {
+      background-color: #0f141c;
+      border-bottom: 1px solid #1e293b;
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo-brand {
+      font-weight: bold;
+      color: #f59e0b;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #f59e0b;
+    }
+    .btn-buy {
+      background-color: #f59e0b;
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+      <a href="#staking" style="background:#f0b90b; color:#000; padding:6px 16px; border-radius:4px; font-weight:bold; font-size:0.85rem; margin-left:8px; text-decoration:none;">Staking DApp</a>
 
-        /* CLEAN & SIMETRIS GALLERY GRID */
-        .gallery-grid-clean {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 25px;
-        }
-        .gallery-card {
-            background: #131722;
-            border: 1px solid #2a2e3d;
-            border-radius: 12px;
-            overflow: hidden;
-            text-align: center;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-        .gallery-card:hover {
-            transform: translateY(-5px);
-            border-color: #f0b90b;
-        }
-        .gallery-img-wrapper {
-            width: 100%;
-            height: 190px;
-            overflow: hidden;
-            background: #0b0e14;
-        }
-        .gallery-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .gallery-card p {
-            padding: 12px 15px;
-            font-size: 0.85rem;
-            color: #a0aec0;
-            margin: 0;
-        }
+    /* Hero Section */
+    .hero {
+      padding: 50px 0 30px 0;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      margin-bottom: 15px;
+    }
+    .hero h1 {
+      font-size: 2.3rem;
+      color: #fff;
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+    .hero p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+    .hero-btn-group {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-main {
+      background-color: #f59e0b;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .btn-sec {
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
 
-        /* FAQ ACCORDION */
-        .faq-item {
-            background: #131722;
-            border: 1px solid #2a2e3d;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            padding: 15px 20px;
-            cursor: pointer;
-        }
-        .faq-question {
-            font-weight: bold;
-            color: #f0b90b;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .faq-answer {
-            margin-top: 10px;
-            color: #a0aec0;
-            font-size: 0.9rem;
-            display: none;
-        }
+    /* Hero Card (Memperbaiki foto jas tanpa kepala) */
+    .hero-card {
+      background-color: #151a23;
+      border: 1px solid #242c3d;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .hero-img-box {
+      width: 100%;
+      height: 380px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background-color: #0d0f12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain !important; /* MEMASTIKAN KEPALA KELIHATAN PENUH */
+      display: block;
+    }
+    .hero-card-title {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
 
-        footer {
-            background: #080a0e;
-            border-top: 1px solid #1e232d;
-            text-align: center;
-            padding: 25px 20px;
-            color: #718096;
-            font-size: 0.9rem;
-        }
-    </style>
+    /* Logo Animated Section */
+    .logo-ac-section {
+      text-align: center;
+      margin: 40px 0 20px 0;
+    }
+    .outer-cyber-ring {
+      transform-origin: center;
+      animation: rotateClockwise 15s linear infinite;
+    }
+    .inner-tech-ring {
+      transform-origin: center;
+      animation: rotateCounter 10s linear infinite;
+    }
+    @keyframes rotateClockwise { 100% { transform: rotate(360deg); } }
+    @keyframes rotateCounter { 100% { transform: rotate(-360deg); } }
+
+    /* Banner Central */
+    .banner-text {
+      border: 1px dashed #f59e0b;
+      background-color: rgba(245, 158, 11, 0.05);
+      color: #f59e0b;
+      text-align: center;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin: 25px 0;
+    }
+    .banner-image {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 45px auto;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #242c3d;
+    }
+    .banner-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Keunggulan Utama */
+    .section-title {
+      text-align: center;
+      color: #f59e0b;
+      font-size: 1.4rem;
+      margin-bottom: 30px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 50px;
+    }
+    .feature-card {
+      background-color: #151a23;
+      border: 1px solid #242c3d;
+      padding: 24px 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .feature-icon {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+    .feature-card h4 {
+      font-size: 0.85rem;
+      color: #e2e8f0;
+    }
+
+    /* Tokenomics Table */
+    .tokenomics-table {
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto 50px auto;
+      border-collapse: collapse;
+      background-color: #151a23;
+      border: 1px solid #242c3d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .tokenomics-table td {
+      padding: 12px 20px;
+      border-bottom: 1px solid #242c3d;
+      font-size: 0.85rem;
+    }
+    .tokenomics-table tr:last-child td {
+      border-bottom: none;
+    }
+    .tokenomics-table td:first-child {
+      color: #94a3b8;
+    }
+    .tokenomics-table td:last-child {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    /* Dokumentasi Section */
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+    .doc-card {
+      background-color: #151a23;
+      border: 1px solid #242c3d;
+      border-radius: 8px;
+      overflow: hidden;
+      padding-bottom: 14px;
+      text-align: center;
+    }
+    .doc-img-box {
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+    }
+    .doc-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+    .doc-card p {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .doc-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-    <div class="logo-container">
-        <img src="logo.png" alt="AFWAN COIN Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40/f0b90b/000000?text=AC'">
-        <span class="logo-text">AFWAN COIN (AC)</span>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo-brand">AFWAN COIN (AC)</div>
+        <ul class="nav-links">
+          <li><a href="#tentang">Tentang</a></li>
+          <li><a href="#keunggulan">Keunggulan</a></li>
+          <li><a href="#tokenomika">Tokenomika</a></li>
+          <li><a href="#dokumentasi">Dokumentasi</a></li>
+        </ul>
+        <a href="https://t.me/AfwanCoin" target="_blank" class="btn-buy">Beli Token</a>
+      </nav>
     </div>
-    <nav>
-        <a href="#about">Tentang</a>
-        <a href="#staking">Staking DApp</a>
-        <a href="#gallery">Galeri & Media</a>
-        <a href="#tokenomics">Tokenomics</a>
-        <a href="#roadmap">Roadmap</a>
-        <a href="#faq">FAQ</a>
-    </nav>
-</header>
+  </header>
 
-<div class="hero">
-    <img src="logo.png" alt="AFWAN COIN Big Logo" class="hero-logo-large" onerror="this.src='https://via.placeholder.com/90/f0b90b/000000?text=AC'">
-    <h1>Ekosistem Masa Depan AFWAN COIN</h1>
-    <p>Aset Kripto Terdesentralisasi di BNB Smart Chain dengan Integrasi Web3 Staking Vault & Imbalan Pasif Harian.</p>
-</div>
-
-<div class="container">
-    
-    <section id="staking" class="staking-card">
-        <div style="text-align: center;">
-            <span class="staking-badge">⚡ WEB3 LIVE VAULT</span>
-            <h2 style="color: #f0b90b; margin: 5px 0 10px 0; font-size: 1.8rem;">AFWAN COIN Staking Vault</h2>
-            <p style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 20px;">Kunci Token AC Anda untuk Mendapatkan Rewards Harian secara Otomatis</p>
-            
-            <button id="btnConnect" onclick="connectWallet()" class="btn-web3 btn-primary" style="font-size: 1rem;">Hubungkan Wallet (MetaMask)</button>
-            <p id="walletAddress" style="font-size: 12px; color: #f0b90b; margin-top: 8px; font-weight: bold; word-break: break-all;"></p>
+  <!-- Hero Section -->
+  <section class="hero" id="tentang">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <span class="badge">BEP-20 BNB Smart Chain</span>
+          <h1>AFWAN COIN (AC)</h1>
+          <p>Aset Digital Masa Depan Komunitas Malang Jawa Timur. Total supply 10M AC, smart contract verified di BscScan untuk menggerakkan ekosistem ekonomi digital & komunitas lokal.</p>
+          <div class="hero-btn-group">
+            <a href="https://t.me/AfwanCoin" target="_blank" class="btn-main">Telegram Official</a>
+            <a href="#tokenomika" class="btn-sec">BscScan Verified</a>
+          </div>
         </div>
 
-        <div id="userDashboard" style="display: none;" class="staking-box">
-            <h4 style="color: #f0b90b; margin: 0 0 12px 0; font-size: 0.95rem; border-bottom: 1px solid #2a2e3d; padding-bottom: 6px;">📊 Dashboard Analytics Anda</h4>
-            
-            <div class="dashboard-grid">
-                <div class="dash-item">
-                    <span style="font-size: 0.75rem; color: #a0aec0;">Saldo AC Wallet:</span>
-                    <div style="font-weight: bold; color: #fff; font-size: 1rem; margin-top: 2px;"><span id="dashWalletBalance">0</span> AC</div>
-                </div>
-                <div class="dash-item">
-                    <span style="font-size: 0.75rem; color: #a0aec0;">Total AC Di-Stake:</span>
-                    <div style="font-weight: bold; color: #f0b90b; font-size: 1rem; margin-top: 2px;"><span id="dashStakedBalance">0</span> AC</div>
-                </div>
-            </div>
-
-            <div class="dash-item" style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.8rem; color: #a0aec0;">Total Aset AC Portofolio:</span>
-                <b style="color: #38a169; font-size: 1.1rem;"><span id="dashTotalAssets">0</span> AC</b>
-            </div>
+        <!-- Foto Profil Utama Hero (Afwan (1).jpeg) -->
+        <div class="hero-card">
+          <div class="hero-img-box">
+            <img src="Afwan (1).jpeg" alt="Inisiatif & Kepemimpinan">
+          </div>
+          <div class="hero-card-title">Inisiatif & Kepemimpinan</div>
         </div>
+      </div>
 
-        <div class="staking-box">
-            <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">1. Stake AC Token</h4>
-            <input type="number" id="stakeAmount" placeholder="Jumlah AC (contoh: 1000)" class="staking-input">
-            <div style="display: flex; gap: 8px;">
-                <button onclick="approveAC()" class="btn-web3 btn-primary">1. Approve AC</button>
-                <button onclick="stakeAC()" class="btn-web3 btn-action">2. Stake AC</button>
-            </div>
+      <!-- Animated Logo AC BEP20 Section (Afwan (2).jpeg) -->
+      <div class="logo-ac-section">
+        <svg viewBox="0 0 500 500" width="220" height="220" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <defs>
+            <linearGradient id="goldFuturistic" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffe066" />
+              <stop offset="40%" stop-color="#f59e0b" />
+              <stop offset="70%" stop-color="#b45309" />
+              <stop offset="100%" stop-color="#78350f" />
+            </linearGradient>
+            <linearGradient id="cyberBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#0369a1" />
+            </linearGradient>
+            <clipPath id="avatarClip">
+              <circle cx="250" cy="225" r="125" />
+            </clipPath>
+          </defs>
+
+          <!-- Outer Cyber Rings -->
+          <circle class="outer-cyber-ring" cx="250" cy="250" r="230" fill="none" stroke="url(#goldFuturistic)" stroke-width="5" stroke-dasharray="120 30 60 30 20 10"/>
+          <circle class="inner-tech-ring" cx="250" cy="250" r="218" fill="none" stroke="url(#cyberBlue)" stroke-width="3" stroke-dasharray="40 40 80 20"/>
+
+          <circle cx="250" cy="250" r="205" fill="#0f172a" stroke="url(#goldFuturistic)" stroke-width="8" />
+
+          <!-- Curved Text -->
+          <path id="textPathTop" d="M 60 250 A 190 190 0 0 1 440 250" fill="none" />
+          <path id="textPathBottom" d="M 440 250 A 190 190 0 0 1 60 250" fill="none" />
+
+          <text fill="#fbbf24" font-size="22" font-weight="900" letter-spacing="4">
+            <textPath href="#textPathTop" startOffset="50%" text-anchor="middle">AFWAN COIN • BEP20</textPath>
+          </text>
+          <text fill="#38bdf8" font-size="15" font-weight="700" letter-spacing="2">
+            <textPath href="#textPathBottom" startOffset="50%" text-anchor="middle">Telegram: @AfwanCoin</textPath>
+          </text>
+
+          <!-- Avatar Frame -->
+          <circle cx="250" cy="225" r="127" fill="none" stroke="url(#goldFuturistic)" stroke-width="4" />
+          <g clip-path="url(#avatarClip)">
+            <image href="Afwan (2).jpeg" x="115" y="70" width="270" height="290" preserveAspectRatio="xMidYMin slice" />
+          </g>
+
+          <!-- AC TOKEN Badge -->
+          <g transform="translate(250, 395)">
+            <rect x="-80" y="-22" width="160" height="44" rx="22" fill="#090d16" stroke="url(#goldFuturistic)" stroke-width="3" />
+            <text x="0" y="7" fill="#fbbf24" font-size="18" font-weight="900" text-anchor="middle">AC TOKEN</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="banner-text">
+        ✔ Verified & Audited Smart Contract di BscScan
+      </div>
+
+      <!-- Banner Tengah Pidato (Afwan (3).jpeg) -->
+      <div class="banner-image">
+        <img src="Afwan (3).jpeg" alt="Pidato Afwan Maksum">
+      </div>
+    </div>
+  </section>
+
+  <!-- Keunggulan Section -->
+  <section id="keunggulan">
+    <div class="container">
+      <h2 class="section-title">Keunggulan Utama</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <h4>Komunitas Solid</h4>
         </div>
-
-        <div class="staking-box">
-            <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">2. Informasi & Klaim Reward</h4>
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #131722; padding: 12px; border-radius: 8px; margin: 10px 0; border: 1px solid #2a2e3d;">
-                <span style="font-size: 0.85rem; color: #a0aec0;">Est. Reward Anda:</span>
-                <b style="font-size: 1.2rem; color: #f0b90b;"><span id="rewardAmount">0</span> AC</b>
-            </div>
-            <button onclick="claimReward()" class="btn-web3 btn-primary">Klaim Reward</button>
-            <button onclick="withdrawAC()" class="btn-web3 btn-danger">Withdraw Stake</button>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h4>Transaksi Terbuka</h4>
         </div>
-    </section>
-
-    <section id="about" style="margin-bottom: 60px;">
-        <h2 class="section-title">Mengenai AFWAN COIN</h2>
-        <p style="text-align: center; color: #a0aec0; max-width: 800px; margin: 0 auto; font-size: 1.05rem;">
-            AFWAN COIN (AC) dirancang untuk memberikan transparansi dan imbal hasil langsung bagi pemegangnya melalui ekosistem Smart Contract yang terverifikasi secara publik di BscScan. Dibuat di atas fondasi BNB Smart Chain, AC menawarkan transaksi yang cepat, murah, dan aman.
-        </p>
-    </section>
-
-    <section id="gallery" style="margin-bottom: 60px;">
-        <h2 class="section-title">Galeri Kegiatan & Ekosistem</h2>
-        <div class="gallery-grid-clean">
-            <div class="gallery-card">
-                <div class="gallery-img-wrapper">
-                    <img src="Afwan (1).jpeg" alt="Kegiatan 1" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+1'">
-                </div>
-                <p>Edukasi & Sosialisasi Komunitas AFWAN COIN</p>
-            </div>
-            <div class="gallery-card">
-                <div class="gallery-img-wrapper">
-                    <img src="Afwan (2).jpeg" alt="Kegiatan 2" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+2'">
-                </div>
-                <p>Peluncuran DApp Staking Vault di BNB Smart Chain</p>
-            </div>
-            <div class="gallery-card">
-                <div class="gallery-img-wrapper">
-                    <img src="Afwan (3).jpeg" alt="Kegiatan 3" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+3'">
-                </div>
-                <p>Inisiatif Ekonomi Digital & Pemberdayaan Komunitas</p>
-            </div>
-            <div class="gallery-card">
-                <div class="gallery-img-wrapper">
-                    <img src="Afwan (4).jpeg" alt="Kegiatan 4" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+4'">
-                </div>
-                <p>Diskusi & Pengembangan Ekosistem Web3</p>
-            </div>
-            <div class="gallery-card">
-                <div class="gallery-img-wrapper">
-                    <img src="Afwan (5).jpeg" alt="Kegiatan 5" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+5'">
-                </div>
-                <p>Pertemuan Anggota Komunitas & Mitra Strategis</p>
-            </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h4>Smart Contract Verified</h4>
         </div>
-    </section>
-
-    <section id="tokenomics" style="margin-bottom: 60px;">
-        <h2 class="section-title">Tokenomics</h2>
-        <div class="grid-3">
-            <div class="card">
-                <h3>Identitas Token</h3>
-                <p><b>Nama:</b> AFWAN COIN<br><b>Simbol:</b> AC<br><b>Desimal:</b> 18</p>
-            </div>
-            <div class="card">
-                <h3>Jaringan & Kontrak</h3>
-                <p><b>Blockchain:</b> BNB Smart Chain (BEP-20)<br><b>Contract:</b> <a href="https://bscscan.com/token/0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822" target="_blank" style="word-break: break-all; font-size: 0.8rem;">0x1493...7822</a></p>
-            </div>
-            <div class="card">
-                <h3>Smart Vault Staking</h3>
-                <p><b>Staking Contract:</b> <a href="https://bscscan.com/address/0xA14e72742d6e4dF4c429DbCDedf409c3674B3D0C" target="_blank" style="word-break: break-all; font-size: 0.8rem;">0xA14e...3D0C</a><br><b>Imbalan:</b> Distribusi On-Chain Otomatis</p>
-            </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔥</div>
+          <h4>Fitur Burnable</h4>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <section id="roadmap" style="margin-bottom: 60px;">
-        <h2 class="section-title">Roadmap Pengembangan</h2>
-        <div class="grid-3">
-            <div class="card">
-                <h3>Fase 1: Inisialisasi</h3>
-                <p>✔ Deploy Smart Contract Token AC<br>✔ Peluncuran Website Resmi<br>✔ Inisialisasi Staking Vault DApp</p>
-            </div>
-            <div class="card">
-                <h3>Fase 2: Ekspansi Komunitas</h3>
-                <p>🔄 Pengajuan CoinMarketCap & CoinGecko<br>🔄 Verifikasi Profil GeckoTerminal<br>🔄 Kampanye Broadcast Komunitas</p>
-            </div>
-            <div class="card">
-                <h3>Fase 3: Ekosistem Web3</h3>
-                <p>⏳ Integrasi Merchant Payment Gateway<br>⏳ Kemitraan Strategis DeFi & DEX Ads<br>⏳ Multi-Tier Lockup Staking</p>
-            </div>
-        </div>
-    </section>
+  <!-- Tokenomics Section -->
+  <section id="tokenomika">
+    <tr>
+  <td>Smart Collateral (Locked)</td>
+  <td>
+    <a href="https://bscscan.com/tx/0xda03e423c63ff937f3dcab0f733162ee2ca819a71b260d95c6536aa19de70f2d" target="_blank" style="color: #f59e0b; font-weight: bold; text-decoration: none;">
+      3.000.000 AC (Verified Tx Hash) 🔗
+    </a>
+  </td>
+</tr>
+<tr>
+  <td>Vault Contract Address</td>
+  <td>
+    <a href="https://bscscan.com/address/0x8dE6c660996A5123dD75586940081CCC1E68Fd0" target="_blank" style="color: #38bdf8; text-decoration: none;">
+      0x8dE6c660...CC1E68Fd0 🔗
+    </a>
+  </td>
+</tr>
+    <div class="container">
+      <h2 class="section-title">Spesifikasi Tokenomika</h2>
+      <table class="tokenomics-table">
+        <tr>
+          <td>Nama Token</td>
+          <td>AFWAN COIN</td>
+        </tr>
+        <tr>
+          <td>Simbol</td>
+          <td>AC</td>
+        </tr>
+        <tr>
+          <td>Jaringan Jaringan</td>
+          <td>BEP-20 (BNB Smart Chain)</td>
+        </tr>
+        <tr>
+          <td>Total Supply</td>
+          <td>10.000.000 AC</td>
+        </tr>
+        <tr>
+          <td>Desimal</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td>Komunitas Telegram</td>
+          <td><a href="https://t.me/AfwanCoin" target="_blank" style="color: #38bdf8; text-decoration: none;">@AfwanCoin</a></td>
+        </tr>
+        <tr>
+          <td>Status Contract</td>
+          <td><span style="color: #22c55e;">Verified Smart Contract</span></td>
+        </tr>
+      </table>
+    </div>
+  </section>
 
-    <section id="faq" style="margin-bottom: 60px;">
-        <h2 class="section-title">Pertanyaan Umum (FAQ)</h2>
-        <div class="faq-item" onclick="toggleFAQ(this)">
-            <div class="faq-question"><span>Apa itu AFWAN COIN (AC)?</span> <span>+</span></div>
-            <div class="faq-answer">AFWAN COIN (AC) adalah token BEP-20 terdesentralisasi di BNB Smart Chain yang dirancang untuk memberikan nilai tambah dan imbal hasil staking bagi penggunanya.</div>
+  <!-- Dokumentasi Section (Afwan (4).jpeg, Afwan (5).jpeg, Afwan-Maksum-IKASI.jpg) -->
+  <section id="dokumentasi">
+    <div class="container">
+      <h2 class="section-title">Kegiatan & Dokumentasi Komunitas</h2>
+      <div class="doc-grid">
+        <div class="doc-card">
+          <div class="doc-img-box">
+            <img src="Afwan (4).jpeg" alt="Kegiatan Komunitas 1">
+          </div>
+          <p>Kualifikasi & Kebersamaan</p>
         </div>
-        <div class="faq-item" onclick="toggleFAQ(this)">
-            <div class="faq-question"><span>Bagaimana cara melakukan Staking AC?</span> <span>+</span></div>
-            <div class="faq-answer">Cukup hubungkan wallet MetaMask Anda ke DApp ini, masukkan jumlah AC yang ingin di-stake, klik '1. Approve AC', lalu klik '2. Stake AC'.</div>
+        <div class="doc-card">
+          <div class="doc-img-box">
+            <img src="Afwan (5).jpeg" alt="Kegiatan Komunitas 2">
+          </div>
+          <p>Peran Inisiatif & Inovasi</p>
         </div>
-        <div class="faq-item" onclick="toggleFAQ(this)">
-            <div class="faq-question"><span>Apakah imbalan Staking bisa diklaim kapan saja?</span> <span>+</span></div>
-            <div class="faq-answer">Ya, imbalan hasil staking terhitung secara harian langsung dari Smart Contract dan dapat diklaim kapan saja dengan menekan tombol 'Klaim Reward'.</div>
+        <div class="doc-card">
+          <div class="doc-img-box">
+            <img src="Afwan-Maksum-IKASI.jpg" alt="Dukungan Warga Komunitas">
+          </div>
+          <p>Dukungan Warga Komunitas</p>
         </div>
-    </section>
-
-</div>
-
-<footer>
-    <p>&copy; 2026 AFWAN COIN (AC). All Rights Reserved. Powered by BNB Smart Chain (BSC).</p>
+      </div>
+    </div>
+  </section>
+  <footer style="text-align: center; padding: 20px; background-color: #0f172a; color: #ffffff;">
+  <p>&copy; 2026 AFWAN COIN (AC). All Rights Reserved.</p>
+  <p>
+    Website: <a href="https://afwancoin.pp.ua" style="color: #fbbf24;">afwancoin.pp.ua</a> | 
+    Email: <a href="mailto:indonesiancryptodeveloper@gmail.com" style="color: #fbbf24;">indonesiancryptodeveloper@gmail.com</a>
+  </p>
+  <p>
+    Telegram: <a href="https://t.me/AfwanCoin" style="color: #38bdf8;">@AfwanCoin</a>
+  </p>
 </footer>
+<!-- SECTION STAKING DAPP INTEGRATION -->
+<section id="staking" style="padding: 40px 20px; background: #131722; color: #fff; text-align: center; border-radius: 12px; border: 1px solid #f0b90b; margin: 40px auto; max-width: 600px;">
+    <h2 style="color: #f0b90b;">AFWAN COIN Staking Vault</h2>
+    <p style="font-size: 0.85rem; color: #a0aec0; margin-top: 5px;">Kunci Token AC Anda untuk Mendapatkan Rewards Harian</p>
+    
+    <button id="btnConnect" onclick="connectWallet()" style="background: #f0b90b; color: #000; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 15px;">Hubungkan Wallet (MetaMask)</button>
+    <p id="walletAddress" style="font-size: 11px; color: #f0b90b; margin-top: 5px;"></p>
 
+    <div style="background: #1e232d; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: left;">
+        <h4 style="color: #fff;">1. Stake AC Token</h4>
+        <input type="number" id="stakeAmount" placeholder="Jumlah AC (contoh: 1000)" style="width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #2a2e3d; background: #0b0e14; color: #fff;">
+        <button onclick="approveAC()" style="background: #f0b90b; color: #000; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin: 4px 0;">Approve AC</button>
+        <button onclick="stakeAC()" style="background: #3182ce; color: #fff; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin: 4px 0;">Stake AC</button>
+    </div>
+
+    <div style="background: #1e232d; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: left;">
+        <h4 style="color: #fff;">2. Informasi & Klaim Reward</h4>
+        <p style="font-size: 0.9rem; margin: 10px 0;">Est. Reward Anda: <b id="rewardAmount" style="color:#f0b90b;">0</b> AC</p>
+        <button onclick="claimReward()" style="background: #f0b90b; color: #000; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin: 4px 0;">Klaim Reward</button>
+        <button onclick="withdrawAC()" style="background: #e53e3e; color: #fff; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin: 4px 0;">Withdraw Stake</button>
+    </div>
+</section>
+
+<!-- Web3 Integration Script -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
-    const TOKEN_ADDRESS = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
-    const STAKING_ADDRESS = "0xA14e72742d6e4dF4c429DbCDedf409c3674B3D0C";
+  // ABI tambahan untuk membaca saldo token & jumlah stake
+const TOKEN_READ_ABI = ["function balanceOf(address account) public view returns (uint256)"];
+const STAKING_READ_ABI = ["function stakers(address account) public view returns (uint256 amount, uint256 rewardAllowed, uint256 rewardPaid)"];
 
-    const TOKEN_ABI = [
-        "function approve(address spender, uint256 amount) public returns (bool)",
-        "function balanceOf(address account) public view returns (uint256)"
-    ];
+async function loadWeb3Analytics() {
+    if (!userAddress || !signer) return;
 
-    const STAKING_ABI = [
-        "function stake(uint256 amount) public",
-        "function claimReward() public",
-        "function withdraw(uint256 amount) public",
-        "function stakers(address account) public view returns (uint256 amount, uint256 rewardAllowed, uint256 rewardPaid)",
-        "function calculateReward(address account) public view returns (uint256)"
-    ];
+    try {
+        // Inisialisasi Contract Read
+        const tokenContractRead = new ethers.Contract(TOKEN_ADDRESS, TOKEN_READ_ABI, provider);
+        const stakingContractRead = new ethers.Contract(STAKING_ADDRESS, STAKING_READ_ABI, provider);
 
-    let provider, userAddress;
+        // 1. Baca Saldo AC di Wallet
+        const rawBalance = await tokenContractRead.balanceOf(userAddress);
+        const walletAC = parseFloat(ethers.utils.formatUnits(rawBalance, 18));
 
-    // Helper untuk memastikan Provider dan Signer selalu aktif
-    async function getSignerAndAddress() {
-        if (typeof window.ethereum === 'undefined') {
-            alert("MetaMask tidak terdeteksi! Harap gunakan browser MetaMask atau install ekstensi MetaMask.");
-            return null;
-        }
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const activeSigner = provider.getSigner();
-        userAddress = await activeSigner.getAddress();
-        return activeSigner;
+        // 2. Baca Jumlah AC yang di-stake
+        const stakerInfo = await stakingContractRead.stakers(userAddress);
+        const stakedAC = parseFloat(ethers.utils.formatUnits(stakerInfo.amount, 18));
+
+        // 3. Hitung Total Aset Portofolio
+        const totalAC = walletAC + stakedAC;
+
+        // Render ke Tampilan Dashboard
+        document.getElementById("dashWalletBalance").innerText = walletAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById("dashStakedBalance").innerText = stakedAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById("dashTotalAssets").innerText = totalAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+
+        // Tampilkan Box Dashboard
+        document.getElementById("userDashboard").style.display = "block";
+
+    } catch (error) {
+        console.error("Gagal memuat Web3 Analytics:", error);
     }
+}
 
-    async function connectWallet() {
+async function approveAC() {
+    if(!userAddress) return alert("Hubungkan wallet terlebih dahulu");
+    const amount = document.getElementById("stakeAmount").value;
+    if(!amount) return alert("Masukkan jumlah AC");
+    try {
+        const parsedAmount = ethers.utils.parseUnits(amount, 18);
+        const tx = await tokenContract.approve(STAKING_ADDRESS, parsedAmount);
+        await tx.wait();
+        alert("Approve Berhasil!");
+    } catch(e) { alert("Transaksi gagal/dibatalkan"); }
+}
+
+async function stakeAC() {
+    if(!userAddress) return alert("Hubungkan wallet terlebih dahulu");
+    const amount = document.getElementById("stakeAmount").value;
+    if(!amount) return alert("Masukkan jumlah AC");
+    try {
+        const parsedAmount = ethers.utils.parseUnits(amount, 18);
+        const tx = await stakingContract.stake(parsedAmount, false);
+        await tx.wait();
+        alert("Staking Berhasil!");
+        updateReward();
+    } catch(e) { alert("Transaksi staking gagal"); }
+}
+
+async function claimReward() {
+    if(!userAddress) return alert("Hubungkan wallet terlebih dahulu");
+    try {
+        const tx = await stakingContract.claimReward(false);
+        await tx.wait();
+        alert("Klaim Reward Berhasil!");
+        updateReward();
+    } catch(e) { alert("Tidak ada klaim reward / transaksi dibatalkan"); }
+}
+
+async function withdrawAC() {
+    if(!userAddress) return alert("Hubungkan wallet terlebih dahulu");
+    const amount = document.getElementById("stakeAmount").value;
+    if(!amount) return alert("Masukkan jumlah AC yang ingin ditarik");
+    try {
+        const parsedAmount = ethers.utils.parseUnits(amount, 18);
+        const tx = await stakingContract.withdraw(parsedAmount, false);
+        await tx.wait();
+        alert("Penarikan Berhasil!");
+        updateReward();
+    } catch(e) { alert("Transaksi penarikan gagal"); }
+}
+
+async function updateReward() {
+    if(stakingContract && userAddress) {
         try {
-            const activeSigner = await getSignerAndAddress();
-            if (!activeSigner) return;
-
-            document.getElementById("walletAddress").innerText = "Terhubung: " + userAddress.substring(0,6) + "..." + userAddress.substring(userAddress.length - 4);
-            document.getElementById("btnConnect").innerText = "Wallet Terhubung ✓";
-            
-            await updateDashboardAndRewards();
-        } catch (err) {
-            console.error("Connect Wallet Error:", err);
-            alert("Gagal menghubungkan wallet: " + (err.reason || err.message));
-        }
+            const reward = await stakingContract.calculateReward(userAddress, false);
+            document.getElementById("rewardAmount").innerText = ethers.utils.formatUnits(reward, 18);
+        } catch(e) {}
     }
-
-    async function updateDashboardAndRewards() {
-        if (!userAddress || !provider) return;
-
-        try {
-            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
-            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, provider);
-
-            // 1. Baca Saldo Wallet
-            const rawBalance = await tokenContract.balanceOf(userAddress);
-            const walletAC = parseFloat(ethers.utils.formatUnits(rawBalance, 18));
-
-            // 2. Baca Jumlah Staking
-            const stakerInfo = await stakingContract.stakers(userAddress);
-            const stakedAC = parseFloat(ethers.utils.formatUnits(stakerInfo.amount, 18));
-
-            // 3. Baca Reward
-            let earnedReward = 0;
-            try {
-                const rawReward = await stakingContract.calculateReward(userAddress);
-                earnedReward = parseFloat(ethers.utils.formatUnits(rawReward, 18));
-            } catch(e) {
-                console.log("Membaca reward error:", e);
-            }
-
-            // Update UI Dashboard Analytics
-            if (document.getElementById("dashWalletBalance")) {
-                document.getElementById("dashWalletBalance").innerText = walletAC.toLocaleString('en-US', {maximumFractionDigits: 2});
-                document.getElementById("dashStakedBalance").innerText = stakedAC.toLocaleString('en-US', {maximumFractionDigits: 2});
-                document.getElementById("dashTotalAssets").innerText = (walletAC + stakedAC).toLocaleString('en-US', {maximumFractionDigits: 2});
-                document.getElementById("userDashboard").style.display = "block";
-            }
-            document.getElementById("rewardAmount").innerText = earnedReward.toLocaleString('en-US', {maximumFractionDigits: 4});
-
-        } catch (err) {
-            console.error("Gagal update data on-chain:", err);
-        }
-    }
-
-    async function approveAC() {
-        const amount = document.getElementById("stakeAmount").value;
-        if (!amount || amount <= 0) return alert("Masukkan jumlah AC yang valid!");
-
-        try {
-            const activeSigner = await getSignerAndAddress();
-            if (!activeSigner) return;
-
-            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, activeSigner);
-            const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
-
-            alert("Konfirmasi transaksi Approve di popup MetaMask Anda...");
-            const tx = await tokenContract.approve(STAKING_ADDRESS, parsedAmount);
-            alert("Transaksi Approve telah dikirim. Menunggu konfirmasi blockchain...");
-            await tx.wait();
-            alert("Approve Berhasil! Sekarang silakan klik tombol '2. Stake AC'.");
-        } catch (err) {
-            console.error("Approve Error:", err);
-            alert("Approve Gagal: " + (err.reason || err.message));
-        }
-    }
-
-    async function stakeAC() {
-        const amount = document.getElementById("stakeAmount").value;
-        if (!amount || amount <= 0) return alert("Masukkan jumlah AC yang valid!");
-
-        try {
-            const activeSigner = await getSignerAndAddress();
-            if (!activeSigner) return;
-
-            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, activeSigner);
-            const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
-
-            alert("Konfirmasi transaksi Stake di popup MetaMask Anda...");
-            const tx = await stakingContract.stake(parsedAmount);
-            alert("Transaksi Stake telah dikirim. Menunggu konfirmasi...");
-            await tx.wait();
-            alert("Selamat! Token AC Anda berhasil di-stake.");
-            await updateDashboardAndRewards();
-        } catch (err) {
-            console.error("Staking Error:", err);
-            alert("Staking Gagal: " + (err.reason || err.message));
-        }
-    }
-
-    async function claimReward() {
-        try {
-            const activeSigner = await getSignerAndAddress();
-            if (!activeSigner) return;
-
-            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, activeSigner);
-            alert("Konfirmasi transaksi Klaim di popup MetaMask Anda...");
-            const tx = await stakingContract.claimReward();
-            alert("Transaksi Klaim dikirim. Menunggu konfirmasi...");
-            await tx.wait();
-            alert("Reward berhasil diklaim ke wallet Anda!");
-            await updateDashboardAndRewards();
-        } catch (err) {
-            console.error("Claim Error:", err);
-            alert("Klaim Gagal: " + (err.reason || err.message));
-        }
-    }
-
-    async function withdrawAC() {
-        const amount = prompt("Masukkan jumlah AC yang ingin Anda withdraw/tarik:");
-        if (!amount || amount <= 0) return;
-
-        try {
-            const activeSigner = await getSignerAndAddress();
-            if (!activeSigner) return;
-
-            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, activeSigner);
-            const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
-            
-            alert("Konfirmasi transaksi Withdraw di popup MetaMask Anda...");
-            const tx = await stakingContract.withdraw(parsedAmount);
-            alert("Transaksi Withdraw dikirim. Menunggu konfirmasi...");
-            await tx.wait();
-            alert("Withdraw berhasil! Token telah dikembalikan ke wallet Anda.");
-            await updateDashboardAndRewards();
-        } catch (err) {
-            console.error("Withdraw Error:", err);
-            alert("Withdraw Gagal: " + (err.reason || err.message));
-        }
-    }
-
-    // TOGGLE FAQ ACCORDION
-    function toggleFAQ(element) {
-        const answer = element.querySelector('.faq-answer');
-        const icon = element.querySelector('.faq-question span:last-child');
-        if (answer.style.display === 'block') {
-            answer.style.display = 'none';
-            icon.innerText = '+';
-        } else {
-            answer.style.display = 'block';
-            icon.innerText = '-';
-        }
-    }
+}
 </script>
 </body>
 </html>
