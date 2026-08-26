@@ -28,11 +28,11 @@
             text-decoration: underline;
         }
         
-        /* HEADER & NAVIGATION */
+        /* HEADER & NAVIGATION WITH LOGO COIN */
         header {
             background: #131722;
             border-bottom: 1px solid #2a2e3d;
-            padding: 15px 5%;
+            padding: 12px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -41,8 +41,19 @@
             z-index: 1000;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        .logo {
-            font-size: 1.4rem;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+        .logo-text {
+            font-size: 1.3rem;
             font-weight: bold;
             color: #f0b90b;
             letter-spacing: 1px;
@@ -69,6 +80,13 @@
             text-align: center;
             padding: 60px 20px;
             background: radial-gradient(circle at center, rgba(240, 185, 11, 0.12) 0%, rgba(11, 14, 20, 1) 70%);
+        }
+        .hero-logo-large {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px rgba(240, 185, 11, 0.4));
         }
         .hero h1 {
             font-size: 2.8rem;
@@ -101,7 +119,7 @@
             box-shadow: 0 0 10px #f0b90b;
         }
         
-        /* MODERN STAKING DAPP CARD */
+        /* STAKING DAPP CARD */
         .staking-card {
             background: linear-gradient(145deg, #131722, #1a1f2c);
             border: 1px solid #f0b90b;
@@ -217,30 +235,42 @@
             margin-bottom: 10px;
         }
 
-        /* GALLERY SECTION */
-        .gallery-grid {
+        /* CLEAN & SIMETRIS GALLERY GRID */
+        .gallery-grid-clean {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
-        .gallery-item {
+        .gallery-card {
             background: #131722;
             border: 1px solid #2a2e3d;
             border-radius: 12px;
             overflow: hidden;
             text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
-        .gallery-item img, .gallery-item video {
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            border-color: #f0b90b;
+        }
+        .gallery-img-wrapper {
             width: 100%;
-            height: 220px;
+            height: 190px;
+            overflow: hidden;
+            background: #0b0e14;
+        }
+        .gallery-img-wrapper img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             display: block;
         }
-        .gallery-item p {
-            padding: 12px;
+        .gallery-card p {
+            padding: 12px 15px;
             font-size: 0.85rem;
             color: #a0aec0;
+            margin: 0;
         }
 
         /* FAQ ACCORDION */
@@ -279,7 +309,10 @@
 <body>
 
 <header>
-    <div class="logo">AFWAN COIN (AC)</div>
+    <div class="logo-container">
+        <img src="logo.png" alt="AFWAN COIN Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40/f0b90b/000000?text=AC'">
+        <span class="logo-text">AFWAN COIN (AC)</span>
+    </div>
     <nav>
         <a href="#about">Tentang</a>
         <a href="#staking">Staking DApp</a>
@@ -291,6 +324,7 @@
 </header>
 
 <div class="hero">
+    <img src="logo.png" alt="AFWAN COIN Big Logo" class="hero-logo-large" onerror="this.src='https://via.placeholder.com/90/f0b90b/000000?text=AC'">
     <h1>Ekosistem Masa Depan AFWAN COIN</h1>
     <p>Aset Kripto Terdesentralisasi di BNB Smart Chain dengan Integrasi Web3 Staking Vault & Imbalan Pasif Harian.</p>
 </div>
@@ -356,24 +390,36 @@
 
     <section id="gallery" style="margin-bottom: 60px;">
         <h2 class="section-title">Galeri Kegiatan & Ekosistem</h2>
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img src="Afwan (1).jpeg" alt="Edukasi Komunitas AFWAN COIN" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+COIN+1'">
+        <div class="gallery-grid-clean">
+            <div class="gallery-card">
+                <div class="gallery-img-wrapper">
+                    <img src="gambar1.jpg" alt="Kegiatan 1" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+1'">
+                </div>
                 <p>Edukasi & Sosialisasi Komunitas AFWAN COIN</p>
             </div>
-            <div class="gallery-item">
-                <img src="Afwan (2).jpeg" alt="Pengembangan DApp Staking Web3" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+COIN+2'">
+            <div class="gallery-card">
+                <div class="gallery-img-wrapper">
+                    <img src="gambar2.jpg" alt="Kegiatan 2" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+2'">
+                </div>
                 <p>Peluncuran DApp Staking Vault di BNB Smart Chain</p>
             </div>
-            <div class="gallery-item">
-                <img src="Afwan (3).jpeg" alt="Inisiatif Ekonomi Digital" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+COIN+3'">
+            <div class="gallery-card">
+                <div class="gallery-img-wrapper">
+                    <img src="gambar3.jpg" alt="Kegiatan 3" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+3'">
+                </div>
                 <p>Inisiatif Ekonomi Digital & Pemberdayaan Komunitas</p>
-                <div class="gallery-item">
-                <img src="Afwan (4).jpeg" alt="Inisiatif Ekonomi Digital" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+COIN+3'">
-                <p>Inisiatif Ekonomi Digital & Pemberdayaan Komunitas</p>
-                    <div class="gallery-item">
-                <img src="Afwan (5).jpeg" alt="Inisiatif Ekonomi Digital" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+COIN+3'">
-                <p>Inisiatif Ekonomi Digital & Pemberdayaan Komunitas</p>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-img-wrapper">
+                    <img src="gambar4.jpg" alt="Kegiatan 4" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+4'">
+                </div>
+                <p>Diskusi & Pengembangan Ekosistem Web3</p>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-img-wrapper">
+                    <img src="gambar5.jpg" alt="Kegiatan 5" onerror="this.src='https://via.placeholder.com/400x220/131722/f0b90b?text=Galeri+AFWAN+5'">
+                </div>
+                <p>Pertemuan Anggota Komunitas & Mitra Strategis</p>
             </div>
         </div>
     </section>
