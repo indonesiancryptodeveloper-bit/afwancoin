@@ -1,132 +1,333 @@
-<!-- MODERN STAKING DAPP SECTION -->
-<style>
-  .staking-card {
-    background: linear-gradient(145deg, #131722, #1a1f2c);
-    border: 1px solid #f0b90b;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(240, 185, 11, 0.15);
-    color: #fff;
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 30px 25px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  .staking-badge {
-    background: rgba(240, 185, 11, 0.1);
-    border: 1px solid #f0b90b;
-    color: #f0b90b;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-  .btn-web3 {
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 12px;
-    width: 100%;
-    margin: 6px 0;
-  }
-  .btn-primary {
-    background: linear-gradient(90deg, #f0b90b, #f3ba2f);
-    color: #000;
-  }
-  .btn-primary:hover {
-    box-shadow: 0 0 15px rgba(240, 185, 11, 0.5);
-    transform: translateY(-1px);
-  }
-  .btn-action {
-    background: #2b313a;
-    color: #fff;
-    border: 1px solid #3a414d;
-  }
-  .btn-action:hover {
-    background: #3a414d;
-    border-color: #f0b90b;
-  }
-  .btn-danger {
-    background: rgba(229, 62, 62, 0.1);
-    color: #e53e3e;
-    border: 1px solid #e53e3e;
-  }
-  .btn-danger:hover {
-    background: #e53e3e;
-    color: #fff;
-  }
-  .staking-box {
-    background: #0b0e14;
-    border-radius: 10px;
-    padding: 15px;
-    margin-top: 15px;
-    border: 1px solid #2a2e3d;
-    text-align: left;
-  }
-  .staking-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #2a2e3d;
-    background: #131722;
-    color: #fff;
-    font-size: 1rem;
-    box-sizing: border-box;
-    margin: 8px 0;
-  }
-  .staking-input:focus {
-    outline: none;
-    border-color: #f0b90b;
-  }
-</style>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staking Vault DApp - AFWAN COIN (AC)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        body {
+            background-color: #0b0e14;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .back-link {
+            color: #f0b90b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .staking-card {
+            background: linear-gradient(145deg, #131722, #1a1f2c);
+            border: 1px solid #f0b90b;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(240, 185, 11, 0.15);
+            padding: 30px 25px;
+        }
+        .staking-badge {
+            background: rgba(240, 185, 11, 0.1);
+            border: 1px solid #f0b90b;
+            color: #f0b90b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .btn-web3 {
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 12px;
+            width: 100%;
+            margin: 6px 0;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #f0b90b, #f3ba2f);
+            color: #000;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(240, 185, 11, 0.5);
+            transform: translateY(-1px);
+        }
+        .btn-action {
+            background: #2b313a;
+            color: #fff;
+            border: 1px solid #3a414d;
+        }
+        .btn-action:hover {
+            background: #3a414d;
+            border-color: #f0b90b;
+        }
+        .btn-danger {
+            background: rgba(229, 62, 62, 0.1);
+            color: #e53e3e;
+            border: 1px solid #e53e3e;
+        }
+        .btn-danger:hover {
+            background: #e53e3e;
+            color: #fff;
+        }
+        .staking-box {
+            background: #0b0e14;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid #2a2e3d;
+            text-align: left;
+        }
+        .staking-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #2a2e3d;
+            background: #131722;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+            margin: 8px 0;
+        }
+        .staking-input:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .dash-item {
+            background: #131722;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #1e232d;
+        }
+    </style>
+</head>
+<body>
 
-<section id="staking" class="staking-card">
-    <div style="text-align: center;">
-        <span class="staking-badge">⚡ WEB3 LIVE VAULT</span>
-        <h2 style="color: #f0b90b; margin: 5px 0 10px 0; font-size: 1.8rem;">AFWAN COIN Staking Vault</h2>
-        <p style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 20px;">Kunci Token AC Anda untuk Mendapatkan Rewards Harian secara Otomatis</p>
-        
-        <button id="btnConnect" onclick="connectWallet()" class="btn-web3 btn-primary" style="font-size: 1rem;">Hubungkan Wallet (MetaMask)</button>
-        <p id="walletAddress" style="font-size: 12px; color: #f0b90b; margin-top: 8px; font-weight: bold; word-break: break-all;"></p>
-    </div>
-  <div id="userDashboard" style="display: none; background: #0b0e14; border: 1px solid #2a2e3d; border-radius: 12px; padding: 15px; margin: 15px 0; text-align: left;">
-    <h4 style="color: #f0b90b; margin: 0 0 10px 0; font-size: 0.95rem; border-bottom: 1px solid #2a2e3d; padding-bottom: 6px;">📊 Dashboard Analytics Anda</h4>
-    
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-        <div style="background: #131722; padding: 10px; border-radius: 8px; border: 1px solid #1e232d;">
-            <span style="font-size: 0.75rem; color: #a0aec0;">Saldo AC Wallet:</span>
-            <div style="font-weight: bold; color: #fff; font-size: 1rem; margin-top: 2px;"><span id="dashWalletBalance">0</span> AC</div>
-        </div>
-        <div style="background: #131722; padding: 10px; border-radius: 8px; border: 1px solid #1e232d;">
-            <span style="font-size: 0.75rem; color: #a0aec0;">Total AC Di-Stake:</span>
-            <div style="font-weight: bold; color: #f0b90b; font-size: 1rem; margin-top: 2px;"><span id="dashStakedBalance">0</span> AC</div>
-        </div>
+<div class="container">
+    <div class="header-nav">
+        <a href="index.html" class="back-link">← Kembali ke Utama (index.html)</a>
+        <span style="font-size: 0.85rem; color: #a0aec0;">Network: BNB Smart Chain</span>
     </div>
 
-    <div style="background: #131722; padding: 10px; border-radius: 8px; border: 1px solid #1e232d; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 0.8rem; color: #a0aec0;">Total Aset Portofolio:</span>
-        <b style="color: #38a169; font-size: 1.1rem;"><span id="dashTotalAssets">0</span> AC</b>
-    </div>
+    <section class="staking-card">
+        <div style="text-align: center;">
+            <span class="staking-badge">⚡ WEB3 LIVE VAULT</span>
+            <h2 style="color: #f0b90b; margin: 5px 0 10px 0; font-size: 1.8rem;">AFWAN COIN Staking Vault</h2>
+            <p style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 20px;">Kunci Token AC Anda untuk Mendapatkan Rewards Harian secara Otomatis</p>
+            
+            <button id="btnConnect" onclick="connectWallet()" class="btn-web3 btn-primary" style="font-size: 1rem;">Hubungkan Wallet (MetaMask)</button>
+            <p id="walletAddress" style="font-size: 12px; color: #f0b90b; margin-top: 8px; font-weight: bold; word-break: break-all;"></p>
+        </div>
+
+        <div id="userDashboard" style="display: none;" class="staking-box">
+            <h4 style="color: #f0b90b; margin: 0 0 12px 0; font-size: 0.95rem; border-bottom: 1px solid #2a2e3d; padding-bottom: 6px;">📊 Dashboard Analytics Anda</h4>
+            
+            <div class="dashboard-grid">
+                <div class="dash-item">
+                    <span style="font-size: 0.75rem; color: #a0aec0;">Saldo AC Wallet:</span>
+                    <div style="font-weight: bold; color: #fff; font-size: 1rem; margin-top: 2px;"><span id="dashWalletBalance">0</span> AC</div>
+                </div>
+                <div class="dash-item">
+                    <span style="font-size: 0.75rem; color: #a0aec0;">Total AC Di-Stake:</span>
+                    <div style="font-weight: bold; color: #f0b90b; font-size: 1rem; margin-top: 2px;"><span id="dashStakedBalance">0</span> AC</div>
+                </div>
+            </div>
+
+            <div class="dash-item" style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8rem; color: #a0aec0;">Total Aset AC Portofolio:</span>
+                <b style="color: #38a169; font-size: 1.1rem;"><span id="dashTotalAssets">0</span> AC</b>
+            </div>
+        </div>
+
+        <div class="staking-box">
+            <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">1. Stake AC Token</h4>
+            <input type="number" id="stakeAmount" placeholder="Jumlah AC (contoh: 1000)" class="staking-input">
+            <div style="display: flex; gap: 8px;">
+                <button onclick="approveAC()" class="btn-web3 btn-primary">1. Approve AC</button>
+                <button onclick="stakeAC()" class="btn-web3 btn-action">2. Stake AC</button>
+            </div>
+        </div>
+
+        <div class="staking-box">
+            <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">2. Informasi & Klaim Reward</h4>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #131722; padding: 12px; border-radius: 8px; margin: 10px 0; border: 1px solid #2a2e3d;">
+                <span style="font-size: 0.85rem; color: #a0aec0;">Est. Reward Anda:</span>
+                <b style="font-size: 1.2rem; color: #f0b90b;"><span id="rewardAmount">0</span> AC</b>
+            </div>
+            <button onclick="claimReward()" class="btn-web3 btn-primary">Klaim Reward</button>
+            <button onclick="withdrawAC()" class="btn-web3 btn-danger">Withdraw Stake</button>
+        </div>
+    </section>
 </div>
-    <div class="staking-box">
-        <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">1. Stake AC Token</h4>
-        <input type="number" id="stakeAmount" placeholder="Jumlah AC (contoh: 1000)" class="staking-input">
-        <div style="display: flex; gap: 8px;">
-            <button onclick="approveAC()" class="btn-web3 btn-primary">1. Approve AC</button>
-            <button onclick="stakeAC()" class="btn-web3 btn-action">2. Stake AC</button>
-        </div>
-    </div>
 
-    <div class="staking-box">
-        <h4 style="color: #f0b90b; margin: 0 0 8px 0; font-size: 0.95rem;">2. Informasi & Klaim Reward</h4>
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #131722; padding: 12px; border-radius: 8px; margin: 10px 0; border: 1px solid #2a2e3d;">
-            <span style="font-size: 0.85rem; color: #a0aec0;">Est. Reward Anda:</span>
-            <b style="font-size: 1.2rem; color: #f0b90b;"><span id="rewardAmount">0</span> AC</b>
-        </div>
-        <button onclick="claimReward()" class="btn-web3 btn-primary">Klaim Reward</button>
-        <button onclick="withdrawAC()" class="btn-web3 btn-danger">Withdraw Stake</button>
-    </div>
-</section>
+<script>
+    const TOKEN_ADDRESS = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
+    const STAKING_ADDRESS = "0xA14e72742d6e4dF4c429DbCDedf409c3674B3D0C";
+
+    const TOKEN_ABI = [
+        "function approve(address spender, uint256 amount) public returns (bool)",
+        "function balanceOf(address account) public view returns (uint256)"
+    ];
+
+    const STAKING_ABI = [
+        "function stake(uint256 amount) public",
+        "function claimReward() public",
+        "function withdraw(uint256 amount) public",
+        "function stakers(address account) public view returns (uint256 amount, uint256 rewardAllowed, uint256 rewardPaid)",
+        "function calculateReward(address account) public view returns (uint256)"
+    ];
+
+    let provider, signer, userAddress;
+
+    async function connectWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+                
+                document.getElementById("walletAddress").innerText = "Terhubung: " + userAddress.substring(0,6) + "..." + userAddress.substring(userAddress.length - 4);
+                document.getElementById("btnConnect").innerText = "Wallet Terhubung ✓";
+                
+                await updateDashboardAndRewards();
+            } catch (err) {
+                console.error(err);
+                alert("Gagal menghubungkan wallet: " + err.message);
+            }
+        } else {
+            alert("MetaMask tidak terdeteksi! Harap gunakan browser Web3 atau buka via MetaMask In-App Browser.");
+        }
+    }
+
+    async function updateDashboardAndRewards() {
+        if (!userAddress || !provider) return;
+
+        try {
+            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
+            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, provider);
+
+            // 1. Baca Saldo Wallet
+            const rawBalance = await tokenContract.balanceOf(userAddress);
+            const walletAC = parseFloat(ethers.utils.formatUnits(rawBalance, 18));
+
+            // 2. Baca Jumlah Staking
+            const stakerInfo = await stakingContract.stakers(userAddress);
+            const stakedAC = parseFloat(ethers.utils.formatUnits(stakerInfo.amount, 18));
+
+            // 3. Baca Reward
+            let earnedReward = 0;
+            try {
+                const rawReward = await stakingContract.calculateReward(userAddress);
+                earnedReward = parseFloat(ethers.utils.formatUnits(rawReward, 18));
+            } catch(e) {
+                console.log("Membaca reward error:", e);
+            }
+
+            // Update UI Dashboard
+            document.getElementById("dashWalletBalance").innerText = walletAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+            document.getElementById("dashStakedBalance").innerText = stakedAC.toLocaleString('en-US', {maximumFractionDigits: 2});
+            document.getElementById("dashTotalAssets").innerText = (walletAC + stakedAC).toLocaleString('en-US', {maximumFractionDigits: 2});
+            document.getElementById("rewardAmount").innerText = earnedReward.toLocaleString('en-US', {maximumFractionDigits: 4});
+
+            document.getElementById("userDashboard").style.display = "block";
+        } catch (err) {
+            console.error("Gagal update data on-chain:", err);
+        }
+    }
+
+    async function approveAC() {
+        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
+        const amount = document.getElementById("stakeAmount").value;
+        if (!amount || amount <= 0) return alert("Masukkan jumlah AC yang valid!");
+
+        try {
+            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+            const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+            const tx = await tokenContract.approve(STAKING_ADDRESS, parsedAmount);
+            alert("Transaksi Approve dikirim ke blockchain. Menunggu konfirmasi...");
+            await tx.wait();
+            alert("Approve Berhasil! Silakan klik tombol '2. Stake AC'.");
+        } catch (err) {
+            console.error(err);
+            alert("Approve Gagal: " + (err.reason || err.message));
+        }
+    }
+
+    async function stakeAC() {
+        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
+        const amount = document.getElementById("stakeAmount").value;
+        if (!amount || amount <= 0) return alert("Masukkan jumlah AC yang valid!");
+
+        try {
+            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+            const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+            const tx = await stakingContract.stake(parsedAmount);
+            alert("Transaksi Stake dikirim. Menunggu konfirmasi...");
+            await tx.wait();
+            alert("Selamat! Token AC Anda berhasil di-stake.");
+            await updateDashboardAndRewards();
+        } catch (err) {
+            console.error(err);
+            alert("Staking Gagal: " + (err.reason || err.message));
+        }
+    }
+
+    async function claimReward() {
+        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
+        try {
+            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+            const tx = await stakingContract.claimReward();
+            alert("Transaksi Klaim dikirim. Menunggu konfirmasi...");
+            await tx.wait();
+            alert("Reward berhasil diklaim ke wallet Anda!");
+            await updateDashboardAndRewards();
+        } catch (err) {
+            console.error(err);
+            alert("Klaim Gagal: " + (err.reason || err.message));
+        }
+    }
+
+    async function withdrawAC() {
+        if (!signer) return alert("Hubungkan wallet terlebih dahulu!");
+        const amount = prompt("Masukkan jumlah AC yang ingin Anda withdraw/tarik:");
+        if (!amount || amount <= 0) return;
+
+        try {
+            const stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+            const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+            const tx = await stakingContract.withdraw(parsedAmount);
+            alert("Transaksi Withdraw dikirim. Menunggu konfirmasi...");
+            await tx.wait();
+            alert("Withdraw berhasil! Token telah dikembalikan ke wallet Anda.");
+            await updateDashboardAndRewards();
+        } catch (err) {
+            console.error(err);
+            alert("Withdraw Gagal: " + (err.reason || err.message));
+        }
+    }
+</script>
+</body>
+</html>
