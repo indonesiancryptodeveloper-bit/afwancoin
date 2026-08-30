@@ -59,11 +59,12 @@
 </div>
 
 <script>
-  const ROUTER_ADDR = "0x10ED433671D090DE300B7F0483543752373360e3";
-  const USDT_ADDR   = "0x55d398326f99059fF775485246999027B3197955";
-  const AC_ADDR     = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
+  // Mengonversi alamat secara otomatis agar selalu valid checksum Ethers.js
+  const ROUTER_ADDR = ethers.utils.getAddress("0x10ED433671D090DE300B7F0483543752373360e3");
+  const USDT_ADDR   = ethers.utils.getAddress("0x55d398326f99059fF775485246999027B3197955");
+  const AC_ADDR     = ethers.utils.getAddress("0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822");
 
-  const SWAP_PATH   = [USDT_ADDR, AC_ADDR]; // Direct Direct Pair USDT -> AC
+  const SWAP_PATH   = [USDT_ADDR, AC_ADDR]; // Direct Pair USDT -> AC
 
   const ERC20_ABI = [
     "function approve(address spender, uint256 amount) public returns (bool)",
@@ -80,7 +81,6 @@
     const statusEl = document.getElementById("statusText");
     const connectBtn = document.getElementById("connectBtn");
 
-    // Deteksi Injected Provider
     let ethProvider = window.ethereum;
     if (window.okxwallet) ethProvider = window.okxwallet;
     else if (window.trustwallet) ethProvider = window.trustwallet;
@@ -99,13 +99,12 @@
       if (!accounts || accounts.length === 0) throw new Error("Akun tidak ditemukan");
 
       signer = provider.getSigner();
-      userAddress = accounts[0];
+      userAddress = ethers.utils.getAddress(accounts[0]);
 
       connectBtn.innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(38);
       statusEl.innerText = "🟢 Terhubung ke BNB Smart Chain";
       document.getElementById("swapBtn").disabled = false;
 
-      // Hitung estimasi jika nilai input sudah terisi
       calculateEstimate();
     } catch (err) {
       statusEl.innerText = "❌ Gagal Terhubung: " + (err.reason || err.message);
