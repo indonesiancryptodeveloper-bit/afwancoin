@@ -57,97 +57,76 @@
 
 <script>
   const ROUTER_ADDR = "0x10ED433671D090DE300B7F0483543752373360e3";
-  const USDT_ADDR   = "0x55d398326f99059fF775485246999027B3197955";
-  const AC_ADDR     = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
+const USDT_ADDR   = "0x55d398326f99059fF775485246999027B3197955";
+const AC_ADDR     = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
 
-  const ERC20_ABI = ["function approve(address spender, uint256 amount) public returns (bool)", "function allowance(address owner, address spender) public view returns (uint256)"];
-  const ROUTER_ABI = [
-    "function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)",
-    "function swapExactTokensForTokensSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external"
-  ];
+// Pairing langsung sesuai pool PancakeSwap: USDT -> AC
+const SWAP_PATH   = [USDT_ADDR, AC_ADDR];
 
-  let provider, signer, userAddress;
-
-  async function connectWallet() {
-    if (window.ethereum) {
-      try {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = provider.getSigner();
-        userAddress = await signer.getAddress();
-        
-        document.getElementById("connectBtn").innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(38);
-        document.getElementById("statusText").innerText = "Terhubung ke BNB Smart Chain";
-        document.getElementById("swapBtn").disabled = false;
-      } catch (err) {
-        alert("Gagal menghubungkan wallet: " + err.message);
-      }
-    } else {
-      alert("Silakan buka via browser OKX Wallet, MetaMask, atau Trust Wallet!");
-    }
-  }
-
-  async function calculateEstimate() {
-    const amount = document.getElementById("usdtInput").value;
-    if (!amount || amount <= 0 || !provider) return;
+async function calculateEstimate() {
+  const amount = document.getElementById("usdtInput").value;
+  if (!amount || amount <= 0 || !provider) return;
+  
+  try {
+    const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, provider);
+    const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
     
-    try {
-      const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, provider);
-      const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
-      const amounts = await routerContract.getAmountsOut(parsedAmount, [USDT_ADDR, AC_ADDR]);
-      const acAmount = ethers.utils.formatUnits(amounts[1], 18);
-      document.getElementById("acOutput").value = parseFloat(acAmount).toFixed(4);
-    } catch (e) {
-      document.getElementById("acOutput").value = "0.0";
-    }
+    const amounts = await routerContract.getAmountsOut(parsedAmount, SWAP_PATH);
+    const acAmount = ethers.utils.formatUnits(amounts[1], 18);
+    document.getElementById("acOutput").value = parseFloat(acAmount).toFixed(4);
+  } catch (e) {
+    document.getElementById("acOutput").value = "0.0";
   }
+}
 
-  async function executeSwap() {
-    const amountVal = document.getElementById("usdtInput").value;
-    if (!amountVal || amountVal <= 0) return alert("Masukkan jumlah USDT!");
+async function executeSwap() {
+  const amountVal = document.getElementById("usdtInput").value;
+  if (!amountVal || amountVal <= 0) return alert("Masukkan jumlah USDT!");
 
-    const statusEl = document.getElementById("statusText");
-    const swapBtn = document.getElementById("swapBtn");
+  const statusEl = document.getElementById("statusText");
+  const swapBtn = document.getElementById("swapBtn");
+  
+  try {
+    swapBtn.disabled = true;
+    const amountIn = ethers.utils.parseUnits(amountVal.toString(), 18);
+    const usdtContract = new ethers.Contract(USDT_ADDR, ERC20_ABI, signer);
+    const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, signer);
+
+    // 1. Cek & Approve USDT
+    statusEl.innerText = "Memeriksa izin USDT...";
+    const allowance = await usdtContract.allowance(userAddress, ROUTER_ADDR);
     
-    try {
-      swapBtn.disabled = true;
-      const amountIn = ethers.utils.parseUnits(amountVal.toString(), 18);
-      const usdtContract = new ethers.Contract(USDT_ADDR, ERC20_ABI, signer);
-      const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, signer);
-
-      // 1. Cek Allowance USDT
-      statusEl.innerText = "Memeriksa izin USDT...";
-      const allowance = await usdtContract.allowance(userAddress, ROUTER_ADDR);
-      
-      if (allowance.lt(amountIn)) {
-        statusEl.innerText = "Konfirmasi Approve USDT di Wallet...";
-        const txApprove = await usdtContract.approve(ROUTER_ADDR, ethers.constants.MaxUint256);
-        await txApprove.wait();
-      }
-
-      // 2. Eksekusi Swap
-      statusEl.innerText = "Memproses Swap di PancakeSwap...";
-      const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 menit
-      const txSwap = await routerContract.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-        amountIn,
-        0, // 0 untuk mempermudah eksekusi tanpa ganjalan slippage keras
-        [USDT_ADDR, AC_ADDR],
-        userAddress,
-        deadline
-      );
-
-      statusEl.innerText = "Menunggu konfirmasi blok...";
-      await txSwap.wait();
-      
-      statusEl.innerText = "✅ Berhasil membeli AFWAN COIN!";
-      alert("Pembelian AC Berhasil!");
-    } catch (err) {
-      statusEl.innerText = "❌ Transaksi Gagal/Batal";
-      console.error(err);
-    } finally {
-      swapBtn.disabled = false;
+    if (allowance.lt(amountIn)) {
+      statusEl.innerText = "Konfirmasi Approve USDT di Wallet...";
+      const txApprove = await usdtContract.approve(ROUTER_ADDR, ethers.constants.MaxUint256);
+      await txApprove.wait();
     }
+
+    // 2. Eksekusi Swap Direct USDT -> AC
+    statusEl.innerText = "Memproses Swap di PancakeSwap...";
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 menit
+
+    const txSwap = await routerContract.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+      amountIn,
+      0, // amountOutMin 0 agar lolos dari masalah toleransi slippage awal
+      SWAP_PATH,
+      userAddress,
+      deadline,
+      { gasLimit: 300000 } // Batas gas manual untuk dompet seluler
+    );
+
+    statusEl.innerText = "Menunggu konfirmasi blok...";
+    await txSwap.wait();
+    
+    statusEl.innerText = "✅ Berhasil membeli AFWAN COIN!";
+    alert("Pembelian AC Berhasil!");
+  } catch (err) {
+    statusEl.innerText = "❌ Transaksi Gagal/Batal";
+    console.error(err);
+  } finally {
+    swapBtn.disabled = false;
   }
+}
 </script>
 </body>
 </html>
