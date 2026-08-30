@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AC Mini Swap - Buy AFWAN COIN</title>
+  <title>AC Instant Mini Swap</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .swap-card { background: #1e293b; padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; }
-    .title { text-align: center; margin-bottom: 20px; font-size: 1.25rem; color: #f59e0b; }
-    .input-group { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-    .input-group label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 16px; }
+    .swap-card { background: #1e293b; padding: 24px; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); border: 1px solid #334155; }
+    .title { text-align: center; margin-bottom: 20px; font-size: 1.3rem; font-weight: bold; color: #f59e0b; }
+    .input-group { background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+    .input-group label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 6px; }
     .input-row { display: flex; justify-content: space-between; align-items: center; }
-    .input-row input { background: transparent; border: none; color: #fff; font-size: 1.2rem; outline: none; width: 60%; }
-    .badge { background: #334155; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; }
-    .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem; margin-top: 8px; }
+    .input-row input { background: transparent; border: none; color: #fff; font-size: 1.4rem; font-weight: bold; outline: none; width: 65%; }
+    .badge { background: #334155; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
+    .btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 1rem; margin-top: 10px; }
     .btn-connect { background: #f59e0b; color: #000; }
+    .btn-connect:hover { background: #d97706; }
     .btn-swap { background: #10b981; color: #fff; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .status-text { font-size: 0.85rem; text-align: center; margin-top: 12px; color: #94a3b8; word-break: break-all; }
+    .btn-swap:hover { background: #059669; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .status-text { font-size: 0.85rem; text-align: center; margin-top: 14px; color: #94a3b8; line-height: 1.4; word-break: break-word; }
   </style>
 </head>
 <body>
@@ -27,106 +30,160 @@
   <div class="title">⚡ AC Instant Mini Swap</div>
   
   <button id="connectBtn" class="btn btn-connect" onclick="connectWallet()">Hubungkan Wallet</button>
-  <div id="statusText" class="status-text"></div>
+  <div id="statusText" class="status-text">Silakan hubungkan dompet Web3 Anda.</div>
 
-  <div style="margin-top: 16px;">
-    <!-- Bayar USDT -->
+  <div style="margin-top: 20px;">
+    <!-- Input USDT -->
     <div class="input-group">
       <label>Bayar</label>
       <div class="input-row">
-        <input type="number" id="usdtInput" placeholder="0.0" step="0.1" oninput="calculateEstimate()">
+        <input type="number" id="usdtInput" placeholder="1.0" min="0.1" step="any" oninput="calculateEstimate()">
         <span class="badge">USDT</span>
       </div>
     </div>
 
-    <div style="text-align: center; color: #94a3b8; margin: -6px 0 6px 0;">⬇️</div>
+    <div style="text-align: center; color: #94a3b8; margin: -4px 0 8px 0; font-size: 1.2rem;">⬇️</div>
 
-    <!-- Terima AC -->
+    <!-- Output AC -->
     <div class="input-group">
       <label>Estimasi Diterima</label>
       <div class="input-row">
         <input type="text" id="acOutput" placeholder="0.0" readonly>
-        <span class="badge" style="color:#f59e0b;">AC</span>
+        <span class="badge" style="color:#f59e0b; border: 1px solid #f59e0b;">AC</span>
       </div>
     </div>
 
-    <!-- Tombol Eksekusi -->
+    <!-- Submit Button -->
     <button id="swapBtn" class="btn btn-swap" onclick="executeSwap()" disabled>Beli AC Sekarang</button>
   </div>
 </div>
 
 <script>
   const ROUTER_ADDR = "0x10ED433671D090DE300B7F0483543752373360e3";
-const USDT_ADDR   = "0x55d398326f99059fF775485246999027B3197955";
-const AC_ADDR     = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
+  const USDT_ADDR   = "0x55d398326f99059fF775485246999027B3197955";
+  const AC_ADDR     = "0x1493F4C3F6Ef8df9Fc2c774A613BDFdb6E4F7822";
 
-// Pairing langsung sesuai pool PancakeSwap: USDT -> AC
-const SWAP_PATH   = [USDT_ADDR, AC_ADDR];
+  const SWAP_PATH   = [USDT_ADDR, AC_ADDR]; // Direct Direct Pair USDT -> AC
 
-async function calculateEstimate() {
-  const amount = document.getElementById("usdtInput").value;
-  if (!amount || amount <= 0 || !provider) return;
-  
-  try {
-    const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, provider);
-    const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
-    
-    const amounts = await routerContract.getAmountsOut(parsedAmount, SWAP_PATH);
-    const acAmount = ethers.utils.formatUnits(amounts[1], 18);
-    document.getElementById("acOutput").value = parseFloat(acAmount).toFixed(4);
-  } catch (e) {
-    document.getElementById("acOutput").value = "0.0";
-  }
-}
+  const ERC20_ABI = [
+    "function approve(address spender, uint256 amount) public returns (bool)",
+    "function allowance(address owner, address spender) public view returns (uint256)"
+  ];
+  const ROUTER_ABI = [
+    "function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)",
+    "function swapExactTokensForTokensSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external"
+  ];
 
-async function executeSwap() {
-  const amountVal = document.getElementById("usdtInput").value;
-  if (!amountVal || amountVal <= 0) return alert("Masukkan jumlah USDT!");
+  let provider, signer, userAddress;
 
-  const statusEl = document.getElementById("statusText");
-  const swapBtn = document.getElementById("swapBtn");
-  
-  try {
-    swapBtn.disabled = true;
-    const amountIn = ethers.utils.parseUnits(amountVal.toString(), 18);
-    const usdtContract = new ethers.Contract(USDT_ADDR, ERC20_ABI, signer);
-    const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, signer);
+  async function connectWallet() {
+    const statusEl = document.getElementById("statusText");
+    const connectBtn = document.getElementById("connectBtn");
 
-    // 1. Cek & Approve USDT
-    statusEl.innerText = "Memeriksa izin USDT...";
-    const allowance = await usdtContract.allowance(userAddress, ROUTER_ADDR);
-    
-    if (allowance.lt(amountIn)) {
-      statusEl.innerText = "Konfirmasi Approve USDT di Wallet...";
-      const txApprove = await usdtContract.approve(ROUTER_ADDR, ethers.constants.MaxUint256);
-      await txApprove.wait();
+    // Deteksi Injected Provider
+    let ethProvider = window.ethereum;
+    if (window.okxwallet) ethProvider = window.okxwallet;
+    else if (window.trustwallet) ethProvider = window.trustwallet;
+
+    if (!ethProvider) {
+      alert("Browser Web3 tidak ditemukan. Harap buka situs ini via DApp Browser di aplikasi OKX Wallet / Trust Wallet / MetaMask!");
+      statusEl.innerText = "⚠️ Buka situs dari DApp Browser Wallet Anda.";
+      return;
     }
 
-    // 2. Eksekusi Swap Direct USDT -> AC
-    statusEl.innerText = "Memproses Swap di PancakeSwap...";
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 menit
+    try {
+      statusEl.innerText = "Menghubungkan ke Wallet...";
+      provider = new ethers.providers.Web3Provider(ethProvider, "any");
+      
+      const accounts = await provider.send("eth_requestAccounts", []);
+      if (!accounts || accounts.length === 0) throw new Error("Akun tidak ditemukan");
 
-    const txSwap = await routerContract.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn,
-      0, // amountOutMin 0 agar lolos dari masalah toleransi slippage awal
-      SWAP_PATH,
-      userAddress,
-      deadline,
-      { gasLimit: 300000 } // Batas gas manual untuk dompet seluler
-    );
+      signer = provider.getSigner();
+      userAddress = accounts[0];
 
-    statusEl.innerText = "Menunggu konfirmasi blok...";
-    await txSwap.wait();
-    
-    statusEl.innerText = "✅ Berhasil membeli AFWAN COIN!";
-    alert("Pembelian AC Berhasil!");
-  } catch (err) {
-    statusEl.innerText = "❌ Transaksi Gagal/Batal";
-    console.error(err);
-  } finally {
-    swapBtn.disabled = false;
+      connectBtn.innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(38);
+      statusEl.innerText = "🟢 Terhubung ke BNB Smart Chain";
+      document.getElementById("swapBtn").disabled = false;
+
+      // Hitung estimasi jika nilai input sudah terisi
+      calculateEstimate();
+    } catch (err) {
+      statusEl.innerText = "❌ Gagal Terhubung: " + (err.reason || err.message);
+      console.error(err);
+    }
   }
-}
+
+  async function calculateEstimate() {
+    const amount = document.getElementById("usdtInput").value;
+    const acOutput = document.getElementById("acOutput");
+    
+    if (!amount || amount <= 0 || !provider) {
+      acOutput.value = "0.0";
+      return;
+    }
+
+    try {
+      const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, provider);
+      const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
+      const amounts = await routerContract.getAmountsOut(parsedAmount, SWAP_PATH);
+      
+      const acAmount = ethers.utils.formatUnits(amounts[1], 18);
+      acOutput.value = parseFloat(acAmount).toFixed(4);
+    } catch (e) {
+      acOutput.value = "0.0";
+    }
+  }
+
+  async function executeSwap() {
+    const amountVal = document.getElementById("usdtInput").value;
+    if (!amountVal || amountVal <= 0) return alert("Masukkan nominal USDT yang valid!");
+
+    const statusEl = document.getElementById("statusText");
+    const swapBtn = document.getElementById("swapBtn");
+
+    try {
+      swapBtn.disabled = true;
+      const amountIn = ethers.utils.parseUnits(amountVal.toString(), 18);
+      
+      const usdtContract = new ethers.Contract(USDT_ADDR, ERC20_ABI, signer);
+      const routerContract = new ethers.Contract(ROUTER_ADDR, ROUTER_ABI, signer);
+
+      // 1. Check & Approve Allowance USDT
+      statusEl.innerText = "Memeriksa izin transaksi USDT...";
+      const allowance = await usdtContract.allowance(userAddress, ROUTER_ADDR);
+
+      if (allowance.lt(amountIn)) {
+        statusEl.innerText = "Konfirmasi Approve USDT di Wallet Anda...";
+        const txApprove = await usdtContract.approve(ROUTER_ADDR, ethers.constants.MaxUint256);
+        statusEl.innerText = "Menunggu persetujuan blok Approve...";
+        await txApprove.wait();
+      }
+
+      // 2. Eksekusi Swap Direct
+      statusEl.innerText = "Konfirmasi transaksi Swap di Wallet Anda...";
+      const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 menit
+
+      const txSwap = await routerContract.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+        amountIn,
+        0, // minOut 0
+        SWAP_PATH,
+        userAddress,
+        deadline,
+        { gasLimit: 350000 }
+      );
+
+      statusEl.innerText = "Memproses transaksi di BNB Smart Chain...";
+      await txSwap.wait();
+
+      statusEl.innerText = "✅ Pembelian AFWAN COIN Berhasil!";
+      alert("Sukses! AFWAN COIN telah dikirim ke wallet Anda.");
+    } catch (err) {
+      statusEl.innerText = "❌ Transaksi Gagal/Batal: " + (err.reason || err.message);
+      console.error(err);
+    } finally {
+      swapBtn.disabled = false;
+    }
+  }
 </script>
 </body>
 </html>
